@@ -1,8 +1,8 @@
-# sky-api-addin
+# sky-addin-client
 [![npm](https://img.shields.io/npm/v/@blackbaud/sky-api-addin.svg)](https://www.npmjs.com/package/@blackbaud/sky-api-addin)
 [![status](https://travis-ci.org/blackbaud/sky-api-addin.svg?branch=master)](https://travis-ci.org/blackbaud/sky-api-addin)
 
-The SKY API add-in library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications. There are various flavors of extension points, but the general pattern is the same. The add-in is registered by providing the URL that will be loaded in an iframe within the application.
+The SKY add-in library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications. There are various flavors of extension points, but the general pattern is the same. The add-in is registered by providing the URL that will be loaded in an iframe within the application.
 
 This library must be used in your add-in for it to render in the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in.
 
@@ -16,7 +16,7 @@ This library makes extensive use of [ES6-style Promises](https://developer.mozil
 - Install the library as a dependency of your project by running `npm install @blackbaud/sky-api-addin --save` in your project's folder.
 
 ### Vanilla JavaScript/ES5
-The SKY API add-in library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
+The SKY add-in library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
 
 ```js
 var BBSkyApiAddin = require('@blackbaud/sky-api-addin');
@@ -145,7 +145,7 @@ client.openHelp({ helpKey: '<target_page>.html' });
 ```
 
 ## Authentication
-SKY API add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
+SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
 
 The `AddinClient` provides a `getAuthToken` function for getting a short-lived "user identity token" from the host page.  This token is a signed value that is issued to the SKY API application and represents the Blackbaud user's identity.
 
