@@ -1,6 +1,6 @@
 # sky-addin-client
-[![npm](https://img.shields.io/npm/v/@blackbaud/sky-api-addin.svg)](https://www.npmjs.com/package/@blackbaud/sky-api-addin)
-[![status](https://travis-ci.org/blackbaud/sky-api-addin.svg?branch=master)](https://travis-ci.org/blackbaud/sky-api-addin)
+[![npm](https://img.shields.io/npm/v/@blackbaud/sky-addin-client.svg)](https://www.npmjs.com/package/@blackbaud/sky-addin-client)
+[![status](https://travis-ci.org/blackbaud/sky-addin-client.svg?branch=master)](https://travis-ci.org/blackbaud/sky-addin-client)
 
 The SKY add-in library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications. There are various flavors of extension points, but the general pattern is the same. The add-in is registered by providing the URL that will be loaded in an iframe within the application.
 
@@ -13,17 +13,17 @@ This library makes extensive use of [ES6-style Promises](https://developer.mozil
 
 ### ES6/TypeScript
 - Ensure that you have Node v6+ and NPM v3+. To verify this, run `node -v` and `npm -v` at the command line.
-- Install the library as a dependency of your project by running `npm install @blackbaud/sky-api-addin --save` in your project's folder.
+- Install the library as a dependency of your project by running `npm install @blackbaud/sky-addin-client --save` in your project's folder.
 
 ### Vanilla JavaScript/ES5
 The SKY add-in library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
 
 ```js
-var BBSkyApiAddin = require('@blackbaud/sky-api-addin');
+var BBSkyApiAddin = require('@blackbaud/sky-addin-client');
 var client = new BBSkyApiAddin.AddinClient({...});
 ```
 
-If you are not using a module loader at all, then you can load the `dist/bundles/sky-api-addin.umd.js` file onto your page via a `<script>` element or concatenated with the rest of your page's JavaScript, and access it via the global `BBSkyApiAddin` variable:
+If you are not using a module loader at all, then you can load the `dist/bundles/sky-addin-client.umd.js` file onto your page via a `<script>` element or concatenated with the rest of your page's JavaScript, and access it via the global `BBSkyApiAddin` variable:
 
 ```js
 // BBSkyApiAddin is global here.
