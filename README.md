@@ -19,15 +19,15 @@ This library makes extensive use of [ES6-style Promises](https://developer.mozil
 The SKY add-in library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
 
 ```js
-var BBSkyApiAddin = require('@blackbaud/sky-addin-client');
-var client = new BBSkyApiAddin.AddinClient({...});
+var BBSkyAddin = require('@blackbaud/sky-addin-client');
+var client = new BBSkyAddin.AddinClient({...});
 ```
 
-If you are not using a module loader at all, then you can load the `dist/bundles/sky-addin-client.umd.js` file onto your page via a `<script>` element or concatenated with the rest of your page's JavaScript, and access it via the global `BBSkyApiAddin` variable:
+If you are not using a module loader at all, then you can load the `dist/bundles/sky-addin-client.umd.js` file onto your page via a `<script>` element or concatenated with the rest of your page's JavaScript, and access it via the global `BBSkyAddin` variable:
 
 ```js
-// BBSkyApiAddin is global here.
-var client = new BBSkyApiAddin.AddinClient({...});
+// BBSkyAddin is global here.
+var client = new BBSkyAddin.AddinClient({...});
 ```
 
 ## Usage
