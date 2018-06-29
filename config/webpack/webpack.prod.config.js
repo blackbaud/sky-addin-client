@@ -4,8 +4,8 @@ module.exports = {
   entry: './index.ts',
   output: {
     path: path.resolve(__dirname, '..', '..', 'dist', 'bundles'),
-    filename: 'sky-api-addin.umd.js',
-    library: 'BBSkyApiAddin',
+    filename: 'sky-addin-client.umd.js',
+    library: 'BBSkyAddinClient',
     libraryTarget: 'umd'
   },
   resolve: {

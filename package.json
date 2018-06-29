@@ -1,8 +1,8 @@
 {
-  "name": "@blackbaud/sky-api-addin",
+  "name": "@blackbaud/sky-addin-client",
   "version": "1.0.0",
   "description": "SKY add-in client",
-  "main": "dist/bundles/sky-api-addin.umd.js",
+  "main": "dist/bundles/sky-addin-client.umd.js",
   "module": "index.ts",
   "scripts": {
     "ci": "npm run test:ci && npm run build",
@@ -12,7 +12,7 @@
     "test:unit:ci": "npm run test:unit:base -- config/karma/ci.karma.conf.js",
     "test:unit:base": "node --max-old-space-size=4096 node_modules/karma/bin/karma start",
     "pretest": "npm run lint",
-    "compress": "npm run uglifyjs -- dist/bundles/sky-api-addin.umd.js -m -o dist/bundles/sky-api-addin.umd.min.js",
+    "compress": "npm run uglifyjs -- dist/bundles/sky-addin-client.umd.js -m -o dist/bundles/sky-addin-client.umd.min.js",
     "build": "npm run rimraf dist && npm run tsc && npm run webpack -- --config config/webpack/webpack.prod.config.js && npm run compress",
     "watch": "npm run test:unit -- --auto-watch --no-single-run",
     "lint": "tslint 'src/**/*.ts'",
@@ -23,14 +23,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blackbaud/sky-api-addin.git"
+    "url": "git+https://github.com/blackbaud/sky-addin-client.git"
   },
   "author": "Blackbaud, Inc.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/blackbaudsky-api-addin/issues"
+    "url": "https://github.com/blackbaudsky-addin-client/issues"
   },
-  "homepage": "https://github.com/blackbaud/sky-api-addin#readme",
+  "homepage": "https://github.com/blackbaud/sky-addin-client#readme",
   "devDependencies": {
     "@types/core-js": "0.9.41",
     "@types/jasmine": "2.5.47",
