@@ -2,9 +2,9 @@
 [![npm](https://img.shields.io/npm/v/@blackbaud/sky-addin-client.svg)](https://www.npmjs.com/package/@blackbaud/sky-addin-client)
 [![status](https://travis-ci.org/blackbaud/sky-addin-client.svg?branch=master)](https://travis-ci.org/blackbaud/sky-addin-client)
 
-The SKY add-in library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications. There are various flavors of extension points, but the general pattern is the same. The add-in is registered by providing the URL that will be loaded in an iframe within the application.
+The SKY add-in client library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications. There will be multiple types of add-ins (tiles, buttons, tabs, etc.) corresponding with various "extension points" throughout the system.  In each case, the general pattern is the same:  the add-in is registered by providing the URL that will be loaded in an iframe within the application.
 
-This library must be used in your add-in for it to render in the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in.
+This library must be used in your add-in for it to render within the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in.
 
 ## Installation
 
@@ -94,7 +94,7 @@ client.showModal({
 });
 ```
 ##### Modal add-in
-The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY API add-in library and make use of the `AddinClient`.
+The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY add-in client library and make use of the `AddinClient`.
 
 The modal add-in will be responsible for rendering the modal element itself (including any chrome around the modal content).  To create a native modal experience, the add-in may set the body background to `transparent` and launch a SKY UX modal within its full screen iframe.
 
