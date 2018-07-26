@@ -1,3 +1,7 @@
+# 1.0.1 (2018-07-26)
+
+- Added import barrels for interfaces.
+
 # 1.0.0 (2018-05-01)
 
 - Added `openHelp` method to client.
