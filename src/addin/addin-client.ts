@@ -323,7 +323,7 @@ export class AddinClient {
         newHeight += parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10);
       }
     }
-    
+
     if (newHeight !== this.lastPostedIframeHeight) {
       this.lastPostedIframeHeight = newHeight;
 
