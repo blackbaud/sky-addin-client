@@ -2,11 +2,11 @@
 [![npm](https://img.shields.io/npm/v/@blackbaud/sky-addin-client.svg)](https://www.npmjs.com/package/@blackbaud/sky-addin-client)
 [![status](https://travis-ci.org/blackbaud/sky-addin-client.svg?branch=master)](https://travis-ci.org/blackbaud/sky-addin-client)
 
-The SKY Add-in Client library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications.  Developers can register the add-in URL with their SKY API application, and at runtime the add-in will be loaded into an iframe within the application.  This library must be used in the add-in for it to render within the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in's iframe.
+The SKY Add-in Client Library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications.  Developers can register the add-in URL with their SKY API application, and at runtime the add-in will be loaded into an iframe within the application.  This library must be used in the add-in for it to render within the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in's iframe.
 
-For SKY Add-ins written in SKY UX, the [`skyux-lib-addin-client`](https://github.com/blackbaud/skyux-lib-addin-client) can be used as a more Angular-friendly wrapper over this lower-level library.
+For SKY Add-ins written in SKY UX, the [SKY UX Add-in Client Library](https://github.com/blackbaud/skyux-lib-addin-client) can be used as a more Angular-friendly wrapper over this lower-level library.
 
-For more information on creating SKY Add-ins, view the documentation on the [`SKY API Developer Portal`](https://developer.blackbaud.com/skyapi/docs/addins).
+For more information on creating SKY Add-ins, view the documentation on the [SKY API Developer Portal](https://developer.blackbaud.com/skyapi/docs/addins).
 
 ## Installation
 
@@ -18,7 +18,7 @@ This library makes extensive use of [ES6-style Promises](https://developer.mozil
 - Install the library as a dependency of your project by running `npm install --save @blackbaud/sky-addin-client` in your project's folder.
 
 ### Vanilla JavaScript/ES5
-The SKY add-in library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
+The SKY Add-in Client Library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
 
 ```js
 var BBSkyAddinClient = require('@blackbaud/sky-addin-client');
@@ -102,7 +102,7 @@ client.showModal({
 ```
 
 ##### Modal add-in
-The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY add-in client library and make use of the `AddinClient`.
+The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY Add-in Client Library and make use of the `AddinClient`.
 
 The modal add-in will be responsible for rendering the modal element itself (including any chrome around the modal content).  To create a native modal experience, the add-in may set the body background to `transparent` and launch a SKY UX modal within its full screen iframe.
 
