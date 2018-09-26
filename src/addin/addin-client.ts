@@ -315,7 +315,7 @@ export class AddinClient {
    * a new post if so.
    */
   private checkForHeightChangesOfAddinContent() {
-    let newHeight = Math.max(document.body.offsetHeight, document.documentElement.offsetHeight)
+    let newHeight = Math.max(document.body.offsetHeight, document.documentElement.offsetHeight);
 
     if (window.getComputedStyle) {
       const style = window.getComputedStyle(document.body);
