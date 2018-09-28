@@ -315,14 +315,8 @@ export class AddinClient {
    * a new post if so.
    */
   private checkForHeightChangesOfAddinContent() {
-    let newHeight = document.body.offsetHeight;
-
-    if (window.getComputedStyle) {
-      const style = window.getComputedStyle(document.body);
-      if (style) {
-        newHeight += parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10);
-      }
-    }
+    // after some discussion and experimentation, using offsetHeight appears to be sufficient
+    const newHeight = document.documentElement.offsetHeight;
 
     if (newHeight !== this.lastPostedIframeHeight) {
       this.lastPostedIframeHeight = newHeight;
