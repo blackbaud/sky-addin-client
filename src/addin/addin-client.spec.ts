@@ -628,7 +628,7 @@ describe('AddinClient ', () => {
         jasmine.clock().tick(1100);
 
         // Validate message was sent.
-        expect(postedMessage.message.height).toBe('130px');
+        expect(postedMessage.message.height).toBe('115px');
         expect(postedMessage.messageType).toBe('height-change');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
         postedMessage = undefined;
@@ -641,7 +641,7 @@ describe('AddinClient ', () => {
         jasmine.clock().tick(1100);
 
         // Validate message was sent.
-        expect(postedMessage.message.height).toBe('230px');
+        expect(postedMessage.message.height).toBe('215px');
         expect(postedMessage.messageType).toBe('height-change');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
         postedMessage = undefined;
@@ -652,7 +652,7 @@ describe('AddinClient ', () => {
         expect(document.documentElement.offsetHeight).toBe(215);
         jasmine.clock().tick(1100);
 
-        // Validate message was sent.
+        // Validate message was not sent.
         expect(postedMessage).toBe(undefined);
         expect(postedOrigin).toBe(undefined);
         postedMessage = undefined;
@@ -666,7 +666,7 @@ describe('AddinClient ', () => {
         initArgs.ready();
 
         // Validate message was sent.
-        expect(postedMessage.message.height).toBe('330px');
+        expect(postedMessage.message.height).toBe('315px');
         expect(postedMessage.messageType).toBe('height-change');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
         postedMessage = undefined;
