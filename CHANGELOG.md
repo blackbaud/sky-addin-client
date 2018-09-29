@@ -1,3 +1,7 @@
+# 1.0.3 (2018-09-28)
+
+- Bugfix when calculating height of addin.
+
 # 1.0.2 (2018-08-13)
 
 - Added import barrels for interfaces at the root.
