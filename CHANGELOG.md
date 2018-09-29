@@ -1,3 +1,7 @@
+# 1.0.3 (2018-09-29)
+
+- Changed height calculation to use documentElement.offsetHeight
+
 # 1.0.2 (2018-08-13)
 
 - Added import barrels for interfaces at the root.
