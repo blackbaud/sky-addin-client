@@ -111,9 +111,18 @@ export class AddinClient {
 
   /**
    * Requests an authentication token for the current user.
+   * @deprecated Use getUserIdentityToken() instead.
    * @returns {Promise<any>} Returns a promise which will resolve with the token value.
    */
   public getAuthToken(): Promise<string> {
+    return this.getUserIdentityToken();
+  }
+
+  /**
+   * Requests a user identity token for the current user.
+   * @returns {Promise<any>} Returns a promise which will resolve with the token value.
+   */
+  public getUserIdentityToken(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const authTokenRequestId = ++this.lastAuthTokenRequestId;
 
@@ -286,6 +295,17 @@ export class AddinClient {
               this.args.callbacks.buttonClick();
             }
             break;
+          case 'help-click':
+            if (this.args.callbacks.helpClick) {
+              this.args.callbacks.helpClick();
+            }
+            break;
+          case 'settings-click':
+            if (this.args.callbacks.settingsClick) {
+              this.args.callbacks.settingsClick();
+            }
+            break;
+
         }
       } else {
         this.warnInvalidOrigin();

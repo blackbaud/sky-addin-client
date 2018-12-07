@@ -67,6 +67,33 @@ describe('AddinClient ', () => {
 
   });
 
+  describe('getAuthToken', () => {
+
+    it('should delegate to the "getUserIdentityToken" function.',
+      () => {
+        let delegated = false;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: () => { return; }
+          }
+        });
+
+        initializeHost();
+
+        spyOn(client, 'getUserIdentityToken').and.callFake(() => {
+          delegated = true;
+        });
+
+        client.getAuthToken();
+
+        client.destroy();
+
+        expect(delegated).toBe(true);
+      });
+
+  });
+
   describe('handleMessage', () => {
 
     describe('host-ready', () => {
@@ -200,9 +227,111 @@ describe('AddinClient ', () => {
 
     });
 
+    describe('help-click', () => {
+
+      it('should call the "helpClick" callback.',
+        () => {
+          let helpClickCalled = false;
+
+          const client = new AddinClient({
+            callbacks: {
+              helpClick: () => { helpClickCalled = true; },
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'help-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          expect(helpClickCalled).toBe(true);
+        });
+
+      it('should tolerate the "helpClick" callback being undefined.',
+        () => {
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'help-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          // No assertion.  Just don't fail.
+        });
+
+    });
+
+    describe('settings-click', () => {
+
+      it('should call the "settingsClick" callback.',
+        () => {
+          let settingsClickCalled = false;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; },
+              settingsClick: () => { settingsClickCalled = true; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'settings-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          expect(settingsClickCalled).toBe(true);
+        });
+
+      it('should tolerate the "settingsClick" callback being undefined.',
+        () => {
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'settings-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          // No assertion.  Just don't fail.
+        });
+
+    });
+
     describe('auth-token', () => {
 
-      it('should pass result back through promise from getAuthToken.',
+      it('should pass result back through promise from getUserIdentityToken.',
         (done) => {
           let tokenReceived: string = null;
 
@@ -214,7 +343,7 @@ describe('AddinClient ', () => {
 
           initializeHost();
 
-          client.getAuthToken().then((token: string) => {
+          client.getUserIdentityToken().then((token: string) => {
             tokenReceived = token;
           });
 
@@ -242,7 +371,7 @@ describe('AddinClient ', () => {
 
     describe('auth-token-fail', () => {
 
-      it('should reject the promise from getAuthToken and return the reason.',
+      it('should reject the promise from getUserIdentityToken and return the reason.',
         () => {
           let reasonReceived: string = null;
 
@@ -254,7 +383,7 @@ describe('AddinClient ', () => {
 
           initializeHost();
 
-          client.getAuthToken().catch((reason: string) => {
+          client.getUserIdentityToken().catch((reason: string) => {
             reasonReceived = reason;
           });
 
@@ -394,7 +523,7 @@ describe('AddinClient ', () => {
 
   });
 
-  describe('getAuthToken', () => {
+  describe('getUserIdentityToken', () => {
 
     it('should raise "get-auth-token" event with increasing request id.',
       () => {
@@ -414,13 +543,13 @@ describe('AddinClient ', () => {
           postedOrigin = targetOrigin;
         });
 
-        client.getAuthToken();
+        client.getUserIdentityToken();
 
         expect(postedMessage.message.authTokenRequestId).toBe(1);
         expect(postedMessage.messageType).toBe('get-auth-token');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
 
-        client.getAuthToken();
+        client.getUserIdentityToken();
 
         // A second call should increment the request id
         expect(postedMessage.message.authTokenRequestId).toBe(2);

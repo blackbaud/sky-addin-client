@@ -62,9 +62,11 @@ For tile or tab add-ins, the URL for the add-in will be rendered in a visible if
 
 The host page will handle rendering the tile or tab component around the add-in iframe.  When calling the `ready` callback, the `title` field will indicate the title for the tile or tab component.  Initially, the entire tile/tab will be hidden, and will show on the page if `showUI` is set to `true` in the callback.  You can set it to `false` to indicate that the tile/tab should not be shown, based on the user's privileges or context of the current record, etc.
 
+For tiles add-ins, an optional `summary` field can be provided along with the `title` - the summary will be displayed when the tile is collapsed.
+
 Tile and tab add-ins will automatically track the height of the add-in's content and resize its container accordingly.
 
-<strong>Note</strong>:  at this time, only Tile add-ins are supported.  Tab add-ins are planned as a future enhancement.
+<strong>Note</strong>:  at this time, only Button and Tile add-ins are supported.  Tab add-ins are planned as a future enhancement.
 
 #### Button add-ins (also not yet supported, but coming soon)
 For button add-ins, the add-in iframe will always be hidden.  The `init` protocol is still used, where `showUI` indicates whether the button should show or not on the page.  The `title` field will specify the label for the button.
@@ -77,11 +79,33 @@ var client = new AddinClient({
     init: (args) => {
       args.ready({
         showUI: true,
-        title: 'My Custom Button Label'
+        title: 'My Custom Button Text'
       });
     },
     buttonClick: () => {
       // Show a modal or take action.
+    }
+  }
+});
+```
+
+#### Additional callbacks for tile add-ins
+Tile add-ins support optional callbacks for `helpClick` and `settingsClick`.  The presence of these callbacks will cause additional "help" and "settings" icons to appear in the tile header.  The callbacks will be invoked whenever the user clicks the help or settings icons, respectively.
+
+```js
+var client = new AddinClient({
+  callbacks: {
+    init: (args) => {
+      args.ready({
+        showUI: true,
+        title: 'My Custom Tile Title'
+      });
+    },
+    helpClick: () => {
+      // The user has clicked the "Help" icon in the tile chrome
+    },
+    settingsClick: () => {
+      // The user has clicked the "Settings" icon in the tile chrome
     }
   }
 });
@@ -156,18 +180,18 @@ client.openHelp({ helpKey: '<target_page>.html' });
 ## Authentication
 SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
 
-The `AddinClient` provides a `getAuthToken` function for getting a short-lived "user identity token" from the host page.  This token is a signed value that is issued to the SKY API application and represents the Blackbaud user's identity.
+The `AddinClient` provides a `getUserIdentityToken` function for getting a short-lived "user identity token" from the host page.  This token is a signed value that is issued to the SKY API application and represents the Blackbaud user's identity.
 
-The general flow is that when an add-in is instantiated, it can request a user identity token from the host page using the `getAuthtoken` function. The host page will return the user identity token to the add-in.  The add-in can then pass the token to its own backend, where it can be validated and used to look up a user in the add-in's native system. If a user mapping exists, then the add-in can present content to the user.  If no user mapping exists, the add-in can prompt the user to login.  Once the user's identity in the native system is known, the add-in can persist the user mapping so that on subsequent loads the user doesn't have to log in again (even across devices).
+The general flow is that when an add-in is instantiated, it can request a user identity token from the host page using the `getUserIdentityToken` function. The host page will return the user identity token to the add-in.  The add-in can then pass the token to its own backend, where it can be validated and used to look up a user in the add-in's native system. If a user mapping exists, then the add-in can present content to the user.  If no user mapping exists, the add-in can prompt the user to login.  Once the user's identity in the native system is known, the add-in can persist the user mapping so that on subsequent loads the user doesn't have to log in again (even across devices).
 
 Note that the user identity token is a JWT that is signed by the SKY API OAuth 2.0 service, but it cannot be used to make calls to the SKY API.  In order to make SKY API calls, a proper SKY API access token must be obtained.
 
 ##### Getting the user identity token
-The `getAuthToken` function will return a Promise which will resolve with the token value.
+The `getUserIdentityToken` function will return a Promise which will resolve with the token value.
 
 ```js
 var client = new AddinClient({...});
-client.getAuthToken().then((token: string) => {
+client.getUserIdentityToken().then((token: string) => {
   // use the token.
   var userIdentityToken = token;
   . . .
@@ -183,7 +207,7 @@ Developers building add-ins in .NET can make use of a Blackbaud-provided library
 The following C# code snippet shows how to use the `Blackbaud.Addin.TokenAuthentication` library to validate the raw JWT token value passed in from the add-in client:
 
 ```cs
-// this represents the user identity token returned from getAuthToken()
+// this represents the user identity token returned from getUserIdentityToken()
 var rawToken = "(raw token value)";
 
 // this is the ID of the developer's SKY API application

@@ -14,4 +14,8 @@ export interface AddinClientReadyArgs {
    */
   title?: string;
 
+  /**
+   * For tile add-ins, indicates the summary text to be displayed when the tile is collapsed
+   */
+  summary?: string;
 }

@@ -15,8 +15,7 @@ export interface AddinHostMessage {
   authToken?: string;
 
   /**
-   * Additional context of the host page, which will vary for different
-   * extensibility points.
+   * Additional context of the host page, which will vary for different extension points.
    */
   context?: any;
 
