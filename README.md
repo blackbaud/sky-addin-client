@@ -57,21 +57,16 @@ var client = new AddinClient({
 });
 ```
 
-#### Tile and tab add-ins
-For tile or tab add-ins, the URL for the add-in will be rendered in a visible iframe on the page, where you can render any custom content.  The iframe will initially be hidden until an initialize protocol is completed between the host and the add-in.
+#### Tile add-ins
+For tile add-ins, the URL for the add-in will be rendered in a visible iframe on the page, where you can render any custom content.  The iframe will initially be hidden until an initialize protocol is completed between the host and the add-in.
 
-The host page will handle rendering the tile or tab component around the add-in iframe.  When calling the `ready` callback, the `title` field will indicate the title for the tile or tab component.  Initially, the entire tile/tab will be hidden, and will show on the page if `showUI` is set to `true` in the callback.  You can set it to `false` to indicate that the tile/tab should not be shown, based on the user's privileges or context of the current record, etc.
+The host page will handle rendering the tile component around the add-in iframe.  When calling the `ready` callback, the `title` field will indicate the title for the tile.  Initially, the entire tile will be hidden, and will show on the page if `showUI` is set to `true` in the callback.  You can set it to `false` to indicate that the tile should not be shown, based on the user's privileges or context of the current record, etc.
 
-For tiles add-ins, an optional `summary` field can be provided along with the `title` - the summary will be displayed when the tile is collapsed.
+Tile add-ins support an optional configuration object that can be used to further control the look/feel/behavior of the tile within the host application.  For
+example, to control whether any additional summary text/image is shown when the tile is collapsed, and control whether the "help" and "settings" icons appear
+in the tile header.
 
-Tile and tab add-ins will automatically track the height of the add-in's content and resize its container accordingly.
-
-<strong>Note</strong>:  at this time, only Button and Tile add-ins are supported.  Tab add-ins are planned as a future enhancement.
-
-#### Button add-ins (also not yet supported, but coming soon)
-For button add-ins, the add-in iframe will always be hidden.  The `init` protocol is still used, where `showUI` indicates whether the button should show or not on the page.  The `title` field will specify the label for the button.
-
-When doing a button add-in, an additional callback for `buttonClick` should be configured.  This will be invoked whenever the user clicks the button for the add-in to take action.
+Tile add-ins support optional callbacks for `helpClick` and `settingsClick`, which will be invoked whenever the user clicks the "help" or "settings" icons, respectively:
 
 ```js
 var client = new AddinClient({
@@ -79,18 +74,32 @@ var client = new AddinClient({
     init: (args) => {
       args.ready({
         showUI: true,
-        title: 'My Custom Button Text'
+        title: 'My Custom Tile Title',
+        tileConfig: {
+          style: 'Text',
+          summary: '18 records',
+          showHelp: true,
+          showSettings: true
+        }
       });
     },
-    buttonClick: () => {
-      // Show a modal or take action.
+    helpClick: () => {
+      // The user has clicked the "Help" icon in the tile header
+    },
+    settingsClick: () => {
+      // The user has clicked the "Settings" icon in the tile header
     }
   }
 });
 ```
 
-#### Additional callbacks for tile add-ins
-Tile add-ins support optional callbacks for `helpClick` and `settingsClick`.  The presence of these callbacks will cause additional "help" and "settings" icons to appear in the tile header.  The callbacks will be invoked whenever the user clicks the help or settings icons, respectively.
+#### Tab add-ins (not yet supported, but coming soon)
+For tab add-ins, the URL for the add-in will be rendered in a visible iframe on the page, where you can render any custom content.  The iframe will initially be hidden until an initialize protocol is completed between the host and the add-in.
+
+The host page will handle rendering the tab component around the add-in iframe.  When calling the `ready` callback, the `title` field will indicate the title for the tab component.  Initially, the entire tab will be hidden, and will show on the page if `showUI` is set to `true` in the callback.  You can set it to `false` to indicate that the tab should not be shown, based on the user's privileges or context of the current record, etc.
+
+Tab add-ins support an optional configuration object that can be used to further control the look/feel/behavior of the tab within the host application.  For
+example, to control whether any additional summary text/image is shown next to the tab caption:
 
 ```js
 var client = new AddinClient({
@@ -98,14 +107,43 @@ var client = new AddinClient({
     init: (args) => {
       args.ready({
         showUI: true,
-        title: 'My Custom Tile Title'
+        title: 'My Custom Tile Title',
+        tabConfig: {
+          style: 'Text',
+          summary: '20''
+        }
+      });
+    }
+  }
+});
+```
+
+Tab add-ins will automatically track the height of the add-in's content and resize its container accordingly.
+
+<strong>Note</strong>:  at this time, only Button and Tile add-ins are supported.  Tab add-ins are planned as a future enhancement.
+
+#### Button add-ins
+For button add-ins, the add-in iframe will always be hidden.  The `init` protocol is still used, where `showUI` indicates whether the button should show or not on the page.  The `title` field will specify the label for the button.
+
+When doing a button add-in, an additional callback for `buttonClick` should be configured.  This will be invoked whenever the user clicks the button for the add-in to take action.
+
+Button add-ins support an optional configuration object that can be used to further control the look/feel/behavior of the button within the host application.  For
+example, to control whether any additional icon is shown next to the button text:
+
+```js
+var client = new AddinClient({
+  callbacks: {
+    init: (args) => {
+      args.ready({
+        showUI: true,
+        title: 'My Custom Button Text',
+        buttonConfig: {
+          style: 'Add'
+        }
       });
     },
-    helpClick: () => {
-      // The user has clicked the "Help" icon in the tile chrome
-    },
-    settingsClick: () => {
-      // The user has clicked the "Settings" icon in the tile chrome
+    buttonClick: () => {
+      // Show a modal or take action.
     }
   }
 });
@@ -168,9 +206,9 @@ var client = new AddinClient({...});
 client.navigate({ url: '<target_url>' });
 ```
 
-#### Opening a BB Help tab
+#### Opening the Blackbaud Help flyout
 
-The add-in can instruct the parent page to display the Help tab, and specify which page to display. To do this, call the `openHelp` method on the `AddinClient` object. This function takes an object argument with property `helpKey` for the name of the help tab to display. A single .html file should be named.
+The add-in can instruct the parent page to display the Help flyout, and specify which topic to display. To do this, call the `openHelp` method on the `AddinClient` object. This function takes an object argument with property `helpKey` for the name of the help topic to display. A single .html file should be named.
 
 ```js
 var client = new AddinClient({...});

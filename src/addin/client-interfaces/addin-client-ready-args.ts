@@ -1,3 +1,7 @@
+import { AddinClientReadyButtonConfig } from './addin-client-ready-button-config';
+import { AddinClientReadyTabConfig } from './addin-client-ready-tab-config';
+import { AddinClientReadyTileConfig } from './addin-client-ready-tile-config';
+
 /**
  * Interface for informing the AddinClient that the add-in is ready.
  * Will dictate if and how the add-in should show in the host page.
@@ -15,7 +19,18 @@ export interface AddinClientReadyArgs {
   title?: string;
 
   /**
-   * For tile add-ins, indicates the summary text to be displayed when the tile is collapsed
+   * Provides additional configuration for Button add-ins
    */
-  summary?: string;
+  buttonConfig?: AddinClientReadyButtonConfig;
+
+  /**
+   * Provides additional configuration for Tab add-ins
+   */
+  tabConfig?: AddinClientReadyTabConfig;
+
+  /**
+   * Provides additional configuration for Tile add-ins
+   */
+  tileConfig?: AddinClientReadyTileConfig;
+
 }

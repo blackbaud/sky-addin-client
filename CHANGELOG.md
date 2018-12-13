@@ -1,3 +1,15 @@
+# 1.0.4 (2018-12-13)
+
+- To remove confusion and clarify the intent, we've added a new method named `getUserIdentityToken`.  This method is
+used to obtain a user identity token from the host application, and replaces the `getAuthToken` method (which is still
+functional but marked as deprecated).
+
+- We added config options for each type of add-in (Button, Tab, Tile) to allow developers to provide additional metadata
+such as tile summary details and button icons.
+
+- We added new `helpClick` and `settingsClick` callbacks, which allow developers to take action when the tile
+help/settings icons are clicked.
+
 # 1.0.3 (2018-09-28)
 
 - Bugfix when calculating height of addin.
