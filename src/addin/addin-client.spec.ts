@@ -624,6 +624,7 @@ describe('AddinClient ', () => {
         document.body.style.marginBottom = '5px';
         document.body.style.height = '100px';
         expect(document.body.offsetHeight).toBe(100);
+        expect(document.documentElement.offsetHeight).toBe(115);
         jasmine.clock().tick(1100);
 
         // Validate message was sent.
@@ -636,6 +637,7 @@ describe('AddinClient ', () => {
         // Change height and wait for interval
         document.body.style.height = '200px';
         expect(document.body.offsetHeight).toBe(200);
+        expect(document.documentElement.offsetHeight).toBe(215);
         jasmine.clock().tick(1100);
 
         // Validate message was sent.
@@ -647,9 +649,10 @@ describe('AddinClient ', () => {
 
         // Don't change height and wait for interval
         expect(document.body.offsetHeight).toBe(200);
+        expect(document.documentElement.offsetHeight).toBe(215);
         jasmine.clock().tick(1100);
 
-        // Validate message was sent.
+        // Validate message was not sent.
         expect(postedMessage).toBe(undefined);
         expect(postedOrigin).toBe(undefined);
         postedMessage = undefined;
@@ -659,6 +662,7 @@ describe('AddinClient ', () => {
         // on the interval to pass.
         document.body.style.height = '300px';
         expect(document.body.offsetHeight).toBe(300);
+        expect(document.documentElement.offsetHeight).toBe(315);
         initArgs.ready();
 
         // Validate message was sent.

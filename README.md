@@ -2,9 +2,11 @@
 [![npm](https://img.shields.io/npm/v/@blackbaud/sky-addin-client.svg)](https://www.npmjs.com/package/@blackbaud/sky-addin-client)
 [![status](https://travis-ci.org/blackbaud/sky-addin-client.svg?branch=master)](https://travis-ci.org/blackbaud/sky-addin-client)
 
-The SKY add-in library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications. There are various flavors of extension points, but the general pattern is the same. The add-in is registered by providing the URL that will be loaded in an iframe within the application.
+The SKY Add-in Client Library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications.  Developers can register the add-in URL with their SKY API application, and at runtime the add-in will be loaded into an iframe within the application.  This library must be used in the add-in for it to render within the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in's iframe.
 
-This library must be used in your add-in for it to render in the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in.
+For SKY Add-ins written in SKY UX, the [SKY UX Add-in Client Library](https://github.com/blackbaud/skyux-lib-addin-client) can be used as a more Angular-friendly wrapper over this lower-level library.
+
+For more information on creating SKY Add-ins, view the documentation on the [SKY API Developer Portal](https://developer.blackbaud.com/skyapi/docs/addins).
 
 ## Installation
 
@@ -13,10 +15,10 @@ This library makes extensive use of [ES6-style Promises](https://developer.mozil
 
 ### ES6/TypeScript
 - Ensure that you have Node v6+ and NPM v3+. To verify this, run `node -v` and `npm -v` at the command line.
-- Install the library as a dependency of your project by running `npm install @blackbaud/sky-addin-client --save` in your project's folder.
+- Install the library as a dependency of your project by running `npm install --save @blackbaud/sky-addin-client` in your project's folder.
 
 ### Vanilla JavaScript/ES5
-The SKY add-in library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
+The SKY Add-in Client Library is also distributed as a UMD bundle.  If you're using ES5 with Node or a tool like Browserify you can `require()` it:
 
 ```js
 var BBSkyAddinClient = require('@blackbaud/sky-addin-client');
@@ -36,7 +38,6 @@ var client = new BBSkyAddinClient.AddinClient({...});
 All add-ins must use this library in order to show in the host application. You will need to construct the `AddinClient` and register for any callbacks from the host page that you wish to handle.  You *must* register for `init`, which will pass key context information to your add-in.
 
 Your `init` function will be called with an arguments object that contains:
-
  - `envId` - The environment ID for the host page
  - `context` - Additional context of the host page, which will vary for different extension points.
  - `ready` - A callback to inform the add-in client that the add-in is initialized and ready to be shown.
@@ -47,11 +48,15 @@ Using the information provided in the `init` arguments, the add-in should determ
 var client = new AddinClient({
   callbacks: {
     init: (args) => {
-      args.ready({ showUI: true, title: 'My Custom Tile Title' });
+      args.ready({
+        showUI: true,
+        title: 'My Custom Tile Title'
+      });
     }
   }
 });
 ```
+
 #### Tile and tab add-ins
 For tile or tab add-ins, the URL for the add-in will be rendered in a visible iframe on the page, where you can render any custom content.  The iframe will initially be hidden until an initialize protocol is completed between the host and the add-in.
 
@@ -70,7 +75,10 @@ When doing a button add-in, an additional callback for `buttonClick` should be c
 var client = new AddinClient({
   callbacks: {
     init: (args) => {
-      args.ready({ showUI: true, title: 'My Custom Button Label' });
+      args.ready({
+        showUI: true,
+        title: 'My Custom Button Label'
+      });
     },
     buttonClick: () => {
       // Show a modal or take action.
@@ -79,9 +87,8 @@ var client = new AddinClient({
 });
 ```
 
-
 #### Showing a modal
-Add-ins are capable of launching a "modal" user experience to show more details or gather additional input from the user.  The modal will be rendered in a separate full-screen iframe to maximum the available real estate (meaning, it will not be scoped to the bounds of the add-in's iframe).
+Add-ins are capable of launching a "modal" user experience to show more details or gather additional input from the user.  The modal will be rendered in a separate full-screen iframe to maximize the available real estate (meaning, it will not be scoped to the bounds of the add-in's iframe).
 
 To launch a modal, call the `showModal` function on the client, passing the URL for the modal and any context data needed by the modal:
 
@@ -93,8 +100,9 @@ client.showModal({
   context: { /* arbitrary context object to pass to modal */ }
 });
 ```
+
 ##### Modal add-in
-The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY API add-in library and make use of the `AddinClient`.
+The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY Add-in Client Library and make use of the `AddinClient`.
 
 The modal add-in will be responsible for rendering the modal element itself (including any chrome around the modal content).  To create a native modal experience, the add-in may set the body background to `transparent` and launch a SKY UX modal within its full screen iframe.
 
@@ -126,6 +134,7 @@ modal.modalClosed.then((context) => {
   // Use the context data passed back from closeModal.
 });
 ```
+
 #### Navigating the parent page
 
 The add-in can choose to navigate the parent page based on user interactions.  To do so, call the `navigate` method on the `AddinClient` object.  This function takes an object argument with property `url` for where to navigate.  A fully qualified url should be used.
@@ -165,12 +174,11 @@ client.getAuthToken().then((token: string) => {
 });
 ```
 ##### Validating the token
-
 After obtaining a user identity token from the host page, the add-in can pass the token to its own backend.  The backend should first validate the token against the SKY API OpenIDConnect endpoint in order to ensure that it hasn't expired or been altered in any way.  This validation step is required in order for the backend to trust the user identity token.
 
 The OpenIDConnect configuration can be found at https://oauth2.sky.blackbaud.com/.well-known/openid-configuration.
 
-Developers building add-ins in .NET can make use of a Blackbaud-provided library to assist with validating the user identity token. This library is distributed as a NuGet package named `Blackbaud.Addin.TokenAuthentication`.  The package wraps up the logic for validating the user identity token JWT, and can be found at https://www.nuget.org/packages/Blackbaud.Addin.tokenAuthentication.
+Developers building add-ins in .NET can make use of a Blackbaud-provided library to assist with validating the user identity token. This library is distributed as a NuGet package named `Blackbaud.Addin.TokenAuthentication`.  The package wraps up the logic for validating the user identity token JWT, and can be found at https://www.nuget.org/packages/Blackbaud.Addin.TokenAuthentication.
 
 The following C# code snippet shows how to use the `Blackbaud.Addin.TokenAuthentication` library to validate the raw JWT token value passed in from the add-in client:
 
@@ -197,3 +205,5 @@ catch (TokenValidationException ex)
 ```
 
 Once the token has been validated, the add-in's backend will know the Blackbaud user ID and can determine if a user mapping exists for a user in the add-in's system. If a mapping exists, then the add-in's backend can immediately present the content for the add-in. If no user mapping exists, the add-in can prompt the user to login.
+
+For more information on Blackbaud's SKY Add-in framework, please see https://developer.blackbaud.com/skyapi/docs/addins.
