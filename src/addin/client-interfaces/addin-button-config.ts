@@ -10,8 +10,4 @@ export interface AddinButtonConfig {
    */
   style?: AddinButtonStyle;
 
-  /**
-   * The text to use for the button
-   */
-  text?: string;
 }
