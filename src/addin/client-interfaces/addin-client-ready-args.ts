@@ -1,3 +1,5 @@
+import { AddinButtonConfig } from './addin-button-config';
+
 /**
  * Interface for informing the AddinClient that the add-in is ready.
  * Will dictate if and how the add-in should show in the host page.
@@ -14,4 +16,8 @@ export interface AddinClientReadyArgs {
    */
   title?: string;
 
+  /**
+   * Metadata used when displaying a button.
+   */
+  buttonConfig?: AddinButtonConfig;
 }
