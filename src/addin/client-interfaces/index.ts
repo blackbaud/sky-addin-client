@@ -1,3 +1,5 @@
+export * from './addin-button-config';
+export * from './addin-button-style';
 export * from './addin-client-args';
 export * from './addin-client-callbacks';
 export * from './addin-client-close-modal-args';
