@@ -3,22 +3,22 @@ import { AddinTileSummaryStyle } from './addin-tile-summary-style';
 /**
  * Interface for defining configuration options for Tile add-ins
  */
-export interface AddinClientReadyTileConfig {
+export interface AddinTileConfig {
 
   /**
    * The style to use for the tile summary
    */
-  style?: AddinTileSummaryStyle;
+  summaryStyle?: AddinTileSummaryStyle;
 
   /**
    * Indicates the summary text to be displayed when the tile is collapsed (only applicable when the style is Text)
    */
-  summary?: string;
+  summaryText?: string;
 
   /**
    * Indicates whether the tile summary should render a check (only applicable when the style is Check)
    */
-  checked?: boolean;
+  summaryChecked?: boolean;
 
   /**
    * Indicates whether to show the Help icon in the tile chrome

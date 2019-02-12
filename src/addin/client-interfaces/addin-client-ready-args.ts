@@ -1,6 +1,5 @@
-import { AddinClientReadyButtonConfig } from './addin-client-ready-button-config';
-import { AddinClientReadyTabConfig } from './addin-client-ready-tab-config';
-import { AddinClientReadyTileConfig } from './addin-client-ready-tile-config';
+import { AddinButtonConfig } from './addin-button-config';
+import { AddinTileConfig } from './addin-tile-config';
 
 /**
  * Interface for informing the AddinClient that the add-in is ready.
@@ -21,16 +20,10 @@ export interface AddinClientReadyArgs {
   /**
    * Provides additional configuration for Button add-ins
    */
-  buttonConfig?: AddinClientReadyButtonConfig;
-
-  /**
-   * Provides additional configuration for Tab add-ins
-   */
-  tabConfig?: AddinClientReadyTabConfig;
+  buttonConfig?: AddinButtonConfig;
 
   /**
    * Provides additional configuration for Tile add-ins
    */
-  tileConfig?: AddinClientReadyTileConfig;
-
+  tileConfig?: AddinTileConfig;
 }
