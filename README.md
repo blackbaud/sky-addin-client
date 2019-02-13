@@ -76,8 +76,8 @@ var client = new AddinClient({
         showUI: true,
         title: 'My Custom Tile Title',
         tileConfig: {
-          style: 'Text',
-          summary: '18 records',
+          summaryStyle: 'Text',
+          summaryText: '18 records',
           showHelp: true,
           showSettings: true
         }
@@ -107,10 +107,10 @@ var client = new AddinClient({
     init: (args) => {
       args.ready({
         showUI: true,
-        title: 'My Custom Tile Title',
+        title: 'My Custom Tab Title',
         tabConfig: {
           style: 'Text',
-          summary: '20''
+          summary: '20'
         }
       });
     }
