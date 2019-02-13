@@ -11,8 +11,18 @@ export interface AddinClientCallbacks {
   init: (args: AddinClientInitArgs) => void;
 
   /**
-   * Callback raised for button extension add-ins indicating that the button was clicked.
+   * Callback raised for button add-ins indicating that the button was clicked.
    */
   buttonClick?: () => void;
+
+  /**
+   * Callback raised for tile add-ins indicating that the help button was clicked.
+   */
+  helpClick?: () => void;
+
+  /**
+   * Callback raised for tile add-ins indicating that the settings button was clicked.
+   */
+  settingsClick?: () => void;
 
 }

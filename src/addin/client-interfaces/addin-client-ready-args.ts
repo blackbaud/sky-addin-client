@@ -1,4 +1,5 @@
 import { AddinButtonConfig } from './addin-button-config';
+import { AddinTileConfig } from './addin-tile-config';
 
 /**
  * Interface for informing the AddinClient that the add-in is ready.
@@ -17,7 +18,12 @@ export interface AddinClientReadyArgs {
   title?: string;
 
   /**
-   * Metadata used when displaying a button.
+   * Provides additional configuration for Button add-ins
    */
   buttonConfig?: AddinButtonConfig;
+
+  /**
+   * Provides additional configuration for Tile add-ins
+   */
+  tileConfig?: AddinTileConfig;
 }

@@ -1,6 +1,6 @@
 /*
-* Defines the style of the button
-*/
+ * Defines the style of the button
+ */
 export enum AddinButtonStyle {
   // No style (default)
   None = 0,
