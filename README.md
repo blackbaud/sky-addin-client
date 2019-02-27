@@ -76,7 +76,7 @@ var client = new AddinClient({
         showUI: true,
         title: 'My Custom Tile Title',
         tileConfig: {
-          summaryStyle: 'Text',
+          summaryStyle: BBSkyAddinClient.AddinTileSummaryStyle.Text,
           summaryText: '18 records',
           showHelp: true,
           showSettings: true
