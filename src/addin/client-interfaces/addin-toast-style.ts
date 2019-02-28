@@ -8,7 +8,7 @@ export enum AddinToastStyle {
   // The toast style for informational purposes (default)
   Info = 1,
 
-  // The toast style for successful operation
+  // The toast style for a successful operation
   Success = 2,
 
   // The toast style for a non-critical error
