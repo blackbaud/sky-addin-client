@@ -5,6 +5,8 @@ import { AddinClientNavigateArgs } from './client-interfaces/addin-client-naviga
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
+import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
+import { AddinToastStyle } from './client-interfaces/addin-toast-style';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
 const TEST_HOST_ORIGIN = 'https://host.nxt.blackbaud.com';
@@ -669,6 +671,42 @@ describe('AddinClient ', () => {
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
 
         client.destroy();
+      });
+
+  });
+
+  describe('show-toast', () => {
+
+    it('should raise "show-toast" event with proper message.',
+      () => {
+        let postedMessage: any;
+        let postedOrigin: string;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: () => { return; }
+          }
+        });
+
+        initializeHost();
+
+        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin;
+        });
+
+        const args: AddinClientShowToastArgs = {
+          message: 'this is a toast message',
+          style: AddinToastStyle.Warning
+        };
+
+        client.showToast(args);
+
+        client.destroy();
+
+        expect(postedMessage.message.message).toBe(args.message);
+        expect(postedMessage.messageType).toBe('show-toast');
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
       });
 
   });

@@ -1,4 +1,4 @@
-import { AddinToastType } from './addin-toast-type';
+import { AddinToastStyle } from './addin-toast-style';
 
 /**
  * Interface for showing a toast from an add-in.
@@ -8,12 +8,12 @@ export interface AddinClientShowToastArgs {
   /**
    * The message to display in the toast.
    */
-  message?: string;
+  message: string;
 
   /**
-   * Specifies the type of toast and determines the color and icon to display.
-   * (Default: AddinToastType.Info)
+   * Specifies the style of the toast and determines the color and icon to display.
+   * (Default: AddinToastStyle.Info)
    */
-  type?: AddinToastType;
+  style?: AddinToastStyle;
 
 }

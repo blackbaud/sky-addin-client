@@ -14,4 +14,4 @@ export * from './addin-client-show-toast-args';
 export * from './addin-tab-summary-style';
 export * from './addin-tile-config';
 export * from './addin-tile-summary-style';
-export * from './addin-toast-type';
+export * from './addin-toast-style';
