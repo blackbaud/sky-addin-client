@@ -1,3 +1,7 @@
+# 1.0.9 (2019-03-01)
+
+- Added a `showToast` callback to allow developers to show a toast with a provided message and toast style.
+
 # 1.0.8 (2019-02-13)
 
 - To remove confusion and clarify the intent, we've added a new method named `getUserIdentityToken`.  This method is

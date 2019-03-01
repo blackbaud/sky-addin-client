@@ -215,6 +215,15 @@ var client = new AddinClient({...});
 client.openHelp({ helpKey: '<target_page>.html' });
 ```
 
+#### Showing a toast
+
+The add-in can instruct the parent page to show a toast. To do this, call the `showToast` method on the `AddinClient` object. This function takes an object argument with properties `message` and `style` representing the content and the display style of the toast.
+
+```js
+var client = new AddinClient({...});
+client.showToast({ message: 'toast message', style: AddinToastStyle.Info });
+```
+
 ## Authentication
 SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
 
