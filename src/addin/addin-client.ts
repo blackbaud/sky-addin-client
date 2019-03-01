@@ -5,6 +5,7 @@ import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-h
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
+import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
@@ -189,6 +190,13 @@ export class AddinClient {
         helpKey: args.helpKey
       },
       messageType: 'open-help'
+    });
+  }
+
+  public showToast(args: AddinClientShowToastArgs) {
+    this.postMessageToHostPage({
+      message: args,
+      messageType: 'show-toast'
     });
   }
 
