@@ -15,6 +15,12 @@ export interface AddinClientCallbacks {
    */
   buttonClick?: () => void;
 
+  flyoutCloseClick?: () => void;
+
+  flyoutNextClick?: () => void;
+
+  flyoutPreviousClick?: () => void;
+
   /**
    * Callback raised for tile add-ins indicating that the help button was clicked.
    */

@@ -3,9 +3,11 @@ import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-clos
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
+import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
+import { AddinClientUpdateFlyoutArgs } from './client-interfaces/addin-client-update-flyout-args';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
@@ -200,6 +202,26 @@ export class AddinClient {
     });
   }
 
+  public showFlyout(args: AddinClientShowFlyoutArgs) {
+    // assign default values if not specified,
+    // consistent with SKY UX flyout defaults
+    args.defaultWidth = args.defaultWidth || 500;
+    args.maxWidth = args.maxWidth || args.defaultWidth;
+    args.minWidth = args.minWidth || 320;
+
+    this.postMessageToHostPage({
+      message: args,
+      messageType: 'show-flyout'
+    });
+  }
+
+  public updateFlyout(args: AddinClientUpdateFlyoutArgs) {
+    this.postMessageToHostPage({
+      message: args,
+      messageType: 'update-flyout'
+    });
+  }
+
   /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
@@ -301,6 +323,21 @@ export class AddinClient {
           case 'button-click':
             if (this.args.callbacks.buttonClick) {
               this.args.callbacks.buttonClick();
+            }
+            break;
+          case 'flyout-close-click':
+            if (this.args.callbacks.flyoutCloseClick) {
+              this.args.callbacks.flyoutCloseClick();
+            }
+            break;
+          case 'flyout-next-click':
+            if (this.args.callbacks.flyoutNextClick) {
+              this.args.callbacks.flyoutNextClick();
+            }
+            break;
+          case 'flyout-previous-click':
+            if (this.args.callbacks.flyoutPreviousClick) {
+              this.args.callbacks.flyoutPreviousClick();
             }
             break;
           case 'help-click':
