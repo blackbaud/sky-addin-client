@@ -4,11 +4,6 @@
 export interface AddinClientUpdateFlyoutArgs {
 
   /**
-   * URL of the add-in to launch as a flyout.
-   */
-  url: string;
-
-  /**
    *
    */
   iteratorNextDisabled?: boolean;

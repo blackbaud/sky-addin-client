@@ -1,9 +1,11 @@
 import { AddinClientArgs } from './client-interfaces/addin-client-args';
+import { AddinClientCloseFlyoutArgs } from './client-interfaces/addin-client-close-flyout-args';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
 import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
+import { AddinClientShowFlyoutResult } from './client-interfaces/addin-client-show-flyout-result';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
@@ -47,6 +49,16 @@ export class AddinClient {
    * Counter to provide unique ids for each modal request.
    */
   private lastModalRequestId = 0;
+
+  /**
+   * Tracks flyout add-ins that have been launched from this add-in.
+   */
+  private flyoutRequests: any[] = [];
+
+  /**
+   * Counter to provide unique ids for each flyout request.
+   */
+  private lastFlyoutRequestId = 0;
 
   /**
    * The origin of the host page.
@@ -202,23 +214,45 @@ export class AddinClient {
     });
   }
 
-  public showFlyout(args: AddinClientShowFlyoutArgs) {
-    // assign default values if not specified,
-    // consistent with SKY UX flyout defaults
-    args.defaultWidth = args.defaultWidth || 500;
-    args.maxWidth = args.maxWidth || args.defaultWidth;
-    args.minWidth = args.minWidth || 320;
+  public showFlyout(args: AddinClientShowFlyoutArgs): AddinClientShowFlyoutResult {
+    return {
+      flyoutClosed: new Promise<any>((resolve, reject) => {
+        const flyoutRequestId = ++this.lastFlyoutRequestId;
 
-    this.postMessageToHostPage({
-      message: args,
-      messageType: 'show-flyout'
-    });
+        this.flyoutRequests[flyoutRequestId] = {
+          reject,
+          resolve
+        };
+
+        // assign default values if not specified,
+        // consistent with SKY UX flyout defaults
+        args.defaultWidth = args.defaultWidth || 500;
+        args.maxWidth = args.maxWidth || args.defaultWidth;
+        args.minWidth = args.minWidth || 320;
+
+        this.postMessageToHostPage({
+          message: {
+            args,
+            flyoutRequestId
+          },
+          messageType: 'show-flyout'
+        });
+      })
+    };
   }
 
   public updateFlyout(args: AddinClientUpdateFlyoutArgs) {
+    console.log('client updateFlyout args: ', args);
     this.postMessageToHostPage({
       message: args,
       messageType: 'update-flyout'
+    });
+  }
+
+  public closeFlyout(args: AddinClientCloseFlyoutArgs) {
+    this.postMessageToHostPage({
+      message: args,
+      messageType: 'close-flyout'
     });
   }
 
@@ -253,6 +287,16 @@ export class AddinClient {
     modalRequest.resolve(message.context);
 
     modalRequests[modalRequestId] = undefined;
+  }
+
+  private handleFlyoutClosedMessage(message: AddinHostMessage) {
+    const flyoutRequests = this.flyoutRequests;
+    const flyoutRequestId = message.flyoutRequestId;
+    const flyoutRequest = flyoutRequests[flyoutRequestId];
+
+    flyoutRequest.resolve(message.context);
+
+    flyoutRequests[flyoutRequestId] = undefined;
   }
 
   /**
@@ -325,10 +369,8 @@ export class AddinClient {
               this.args.callbacks.buttonClick();
             }
             break;
-          case 'flyout-close-click':
-            if (this.args.callbacks.flyoutCloseClick) {
-              this.args.callbacks.flyoutCloseClick();
-            }
+          case 'flyout-closed':
+            this.handleFlyoutClosedMessage(data.message);
             break;
           case 'flyout-next-click':
             if (this.args.callbacks.flyoutNextClick) {

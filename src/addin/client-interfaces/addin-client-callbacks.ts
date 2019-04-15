@@ -15,8 +15,6 @@ export interface AddinClientCallbacks {
    */
   buttonClick?: () => void;
 
-  flyoutCloseClick?: () => void;
-
   flyoutNextClick?: () => void;
 
   flyoutPreviousClick?: () => void;
