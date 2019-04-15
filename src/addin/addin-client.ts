@@ -1,15 +1,12 @@
 import { AddinClientArgs } from './client-interfaces/addin-client-args';
-import { AddinClientCloseFlyoutArgs } from './client-interfaces/addin-client-close-flyout-args';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
 import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
-import { AddinClientShowFlyoutResult } from './client-interfaces/addin-client-show-flyout-result';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
-import { AddinClientUpdateFlyoutArgs } from './client-interfaces/addin-client-update-flyout-args';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
@@ -214,7 +211,7 @@ export class AddinClient {
     });
   }
 
-  public showFlyout(args: AddinClientShowFlyoutArgs): AddinClientShowFlyoutResult {
+  public showFlyout(args: AddinClientShowFlyoutArgs) {
     return {
       flyoutClosed: new Promise<any>((resolve, reject) => {
         const flyoutRequestId = ++this.lastFlyoutRequestId;
@@ -239,21 +236,6 @@ export class AddinClient {
         });
       })
     };
-  }
-
-  public updateFlyout(args: AddinClientUpdateFlyoutArgs) {
-    console.log('client updateFlyout args: ', args);
-    this.postMessageToHostPage({
-      message: args,
-      messageType: 'update-flyout'
-    });
-  }
-
-  public closeFlyout(args: AddinClientCloseFlyoutArgs) {
-    this.postMessageToHostPage({
-      message: args,
-      messageType: 'close-flyout'
-    });
   }
 
   /**
@@ -287,16 +269,6 @@ export class AddinClient {
     modalRequest.resolve(message.context);
 
     modalRequests[modalRequestId] = undefined;
-  }
-
-  private handleFlyoutClosedMessage(message: AddinHostMessage) {
-    const flyoutRequests = this.flyoutRequests;
-    const flyoutRequestId = message.flyoutRequestId;
-    const flyoutRequest = flyoutRequests[flyoutRequestId];
-
-    flyoutRequest.resolve(message.context);
-
-    flyoutRequests[flyoutRequestId] = undefined;
   }
 
   /**
@@ -368,9 +340,6 @@ export class AddinClient {
             if (this.args.callbacks.buttonClick) {
               this.args.callbacks.buttonClick();
             }
-            break;
-          case 'flyout-closed':
-            this.handleFlyoutClosedMessage(data.message);
             break;
           case 'flyout-next-click':
             if (this.args.callbacks.flyoutNextClick) {
