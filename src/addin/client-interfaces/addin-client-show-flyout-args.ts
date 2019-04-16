@@ -1,3 +1,5 @@
+import { AddinClientFlyoutPermalink } from './addin-client-flyout-permalink';
+
 /**
  * Interface for showing a flyout add-in.
  */
@@ -32,17 +34,7 @@ export interface AddinClientShowFlyoutArgs {
   /**
    *
    */
-  showPermalink?: boolean;
-
-  /**
-   *
-   */
-  permalinkLabel?: string;
-
-  /**
-   *
-   */
-  permalinkUrl?: string;
+  permalink?: AddinClientFlyoutPermalink;
 
   /**
    * Context information to pass to the flyout add-in when it receives the

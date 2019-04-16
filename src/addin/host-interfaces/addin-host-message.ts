@@ -30,11 +30,6 @@ export interface AddinHostMessage {
   modalRequestId?: number;
 
   /**
-   * Identifier to correlate flyout requests from the add-in client to the host.
-   */
-  flyoutRequestId?: number;
-
-  /**
    * Generic field for passing information about the request, such as the explanation for a
    * auth-token-fail message.
    */

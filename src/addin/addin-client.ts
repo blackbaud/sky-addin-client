@@ -48,16 +48,6 @@ export class AddinClient {
   private lastModalRequestId = 0;
 
   /**
-   * Tracks flyout add-ins that have been launched from this add-in.
-   */
-  private flyoutRequests: any[] = [];
-
-  /**
-   * Counter to provide unique ids for each flyout request.
-   */
-  private lastFlyoutRequestId = 0;
-
-  /**
    * The origin of the host page.
    */
   private trustedOrigin: string;
@@ -212,30 +202,18 @@ export class AddinClient {
   }
 
   public showFlyout(args: AddinClientShowFlyoutArgs) {
-    return {
-      flyoutClosed: new Promise<any>((resolve, reject) => {
-        const flyoutRequestId = ++this.lastFlyoutRequestId;
+      // assign default values if not specified,
+      // consistent with SKY UX flyout defaults
+      args.defaultWidth = args.defaultWidth || 500;
+      args.maxWidth = args.maxWidth || args.defaultWidth;
+      args.minWidth = args.minWidth || 320;
 
-        this.flyoutRequests[flyoutRequestId] = {
-          reject,
-          resolve
-        };
-
-        // assign default values if not specified,
-        // consistent with SKY UX flyout defaults
-        args.defaultWidth = args.defaultWidth || 500;
-        args.maxWidth = args.maxWidth || args.defaultWidth;
-        args.minWidth = args.minWidth || 320;
-
-        this.postMessageToHostPage({
-          message: {
-            args,
-            flyoutRequestId
-          },
-          messageType: 'show-flyout'
-        });
-      })
-    };
+      this.postMessageToHostPage({
+        message: {
+          args
+        },
+        messageType: 'show-flyout'
+      });
   }
 
   /**
