@@ -144,7 +144,7 @@ export class AddinClient {
 
   /**
    * Requests the host page to launch a modal add-in.
-   * @param args Arguments for launcing the modal.
+   * @param args Arguments for launching the modal.
    * @returns {Promise<any>} Returns a promise that will be resolved when the modal add-in is closed.
    * Promise will resolve with context data passed by from the modal add-in's closeModal call.
    */
@@ -194,6 +194,10 @@ export class AddinClient {
     });
   }
 
+  /**
+   * Informs the host to show a toast message.
+   * @param args Arguments for showing a toast.
+   */
   public showToast(args: AddinClientShowToastArgs) {
     this.postMessageToHostPage({
       message: args,
@@ -201,6 +205,10 @@ export class AddinClient {
     });
   }
 
+  /**
+   * Requests the host page to launch a flyout add-in.
+   * @param args Arguments for launching the flyout.
+   */
   public showFlyout(args: AddinClientShowFlyoutArgs) {
       // assign default values if not specified,
       // consistent with SKY UX flyout defaults

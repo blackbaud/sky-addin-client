@@ -6,12 +6,12 @@
 export interface AddinClientFlyoutPermalink {
 
   /**
-   *
+   * Specifies a text label for the permalink button.
    */
   label?: string;
 
   /**
-   *
+   * Specifies an external URL for the permalink.
    */
   url?: string;
 }

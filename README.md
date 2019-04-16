@@ -224,6 +224,25 @@ var client = new AddinClient({...});
 client.showToast({ message: 'toast message', style: AddinToastStyle.Info });
 ```
 
+#### Showing a flyout
+Add-ins are capable of launching a "flyout" user experience to display large quantities of supplementary information related to a task.
+
+To launch a flyout, call the `showFlyout` function on the client, passing the URL for the flyout and any context data needed by the flyout:
+
+```js
+// Parent add-in launching a flyout
+var client = new AddinClient({...});
+client.showFlyout({
+  url: '<flyout-addin-url>',
+  context: { /* arbitrary context object to pass to flyout */ }
+});
+```
+
+##### Flyout add-in
+The host page will launch an iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The flyout page must also pull in the SKY Add-in Client Library and make use of the `AddinClient`.
+
+As with a typical add-in, the flyout add-in should register for the `init` callback and will receive `envId` in the arguments. The `context` field for arguments will match the context object passed into the `showFlyout` call from the parent add-in.  Note that this is crossing iframes so the object has been serialized and deserialized.  It can be used for passing data but not functions.
+
 ## Authentication
 SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
 
