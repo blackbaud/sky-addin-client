@@ -1,10 +1,10 @@
 # 1.0.10 (2019-04-16)
 
-- Added a `showFlyout` callback to allow developers to display supplementary information in a flyout panel.
+- Added a `showFlyout` method to allow developers to display supplementary information in a flyout panel.
 
 # 1.0.9 (2019-03-01)
 
-- Added a `showToast` callback to allow developers to show a toast with a provided message and toast style.
+- Added a `showToast` method to allow developers to show a toast with a provided message and toast style.
 
 # 1.0.8 (2019-02-13)
 
