@@ -217,9 +217,7 @@ export class AddinClient {
       args.minWidth = args.minWidth || 320;
 
       this.postMessageToHostPage({
-        message: {
-          args
-        },
+        message: args,
         messageType: 'show-flyout'
       });
   }

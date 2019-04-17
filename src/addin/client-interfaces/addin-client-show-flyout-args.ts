@@ -44,8 +44,7 @@ export interface AddinClientShowFlyoutArgs {
   iteratorPreviousDisabled?: boolean;
 
   /**
-   * Displays a permalink button in the flyout header that navigates users to the URL
-   * representative of the flyout's contents.
+   * Displays a permalink button in the flyout header.
    */
   permalink?: AddinClientFlyoutPermalink;
 

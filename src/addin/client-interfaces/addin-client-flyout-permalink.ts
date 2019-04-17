@@ -1,7 +1,6 @@
 /**
  * Interface for information to display a permalink button
- * in the flyout header that navigates users to the URL
- * representative of the flyout's contents.
+ * in the flyout header.
  */
 export interface AddinClientFlyoutPermalink {
 
