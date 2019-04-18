@@ -225,7 +225,7 @@ client.showToast({ message: 'toast message', style: AddinToastStyle.Info });
 ```
 
 #### Showing a flyout
-Add-ins are capable of launching a "flyout" user experience to display large quantities of supplementary information related to a task.
+Add-ins are capable of launching a "flyout" user experience to display additional information.
 
 To launch a flyout, call the `showFlyout` function on the client, passing the URL for the flyout and any context data needed by the flyout:
 
