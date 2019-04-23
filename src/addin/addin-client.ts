@@ -3,6 +3,7 @@ import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-clos
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
+import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
@@ -143,7 +144,7 @@ export class AddinClient {
 
   /**
    * Requests the host page to launch a modal add-in.
-   * @param args Arguments for launcing the modal.
+   * @param args Arguments for launching the modal.
    * @returns {Promise<any>} Returns a promise that will be resolved when the modal add-in is closed.
    * Promise will resolve with context data passed by from the modal add-in's closeModal call.
    */
@@ -193,11 +194,32 @@ export class AddinClient {
     });
   }
 
+  /**
+   * Informs the host to show a toast message.
+   * @param args Arguments for showing a toast.
+   */
   public showToast(args: AddinClientShowToastArgs) {
     this.postMessageToHostPage({
       message: args,
       messageType: 'show-toast'
     });
+  }
+
+  /**
+   * Requests the host page to launch a flyout add-in.
+   * @param args Arguments for launching the flyout.
+   */
+  public showFlyout(args: AddinClientShowFlyoutArgs) {
+      // assign default values if not specified,
+      // consistent with SKY UX flyout defaults
+      args.defaultWidth = args.defaultWidth || 500;
+      args.maxWidth = args.maxWidth || args.defaultWidth;
+      args.minWidth = args.minWidth || 320;
+
+      this.postMessageToHostPage({
+        message: args,
+        messageType: 'show-flyout'
+      });
   }
 
   /**
@@ -301,6 +323,16 @@ export class AddinClient {
           case 'button-click':
             if (this.args.callbacks.buttonClick) {
               this.args.callbacks.buttonClick();
+            }
+            break;
+          case 'flyout-next-click':
+            if (this.args.callbacks.flyoutNextClick) {
+              this.args.callbacks.flyoutNextClick();
+            }
+            break;
+          case 'flyout-previous-click':
+            if (this.args.callbacks.flyoutPreviousClick) {
+              this.args.callbacks.flyoutPreviousClick();
             }
             break;
           case 'help-click':

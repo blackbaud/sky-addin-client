@@ -4,6 +4,7 @@ import { AddinClientInitArgs } from './client-interfaces/addin-client-init-args'
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
+import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
 import { AddinToastStyle } from './client-interfaces/addin-toast-style';
@@ -711,6 +712,87 @@ describe('AddinClient ', () => {
 
   });
 
+  describe('show-flyout', () => {
+
+    it('should raise "show-flyout" event with proper message.',
+      () => {
+        let postedMessage: any;
+        let postedOrigin: string;
+        let initCalled: boolean = false;
+        let flyoutNextClickCalled: boolean = false;
+        let flyoutPreviousClickCalled: boolean = false;
+
+        const client = new AddinClient({
+          callbacks: {
+            flyoutNextClick: () => { flyoutNextClickCalled = true; },
+            flyoutPreviousClick: () => { flyoutPreviousClickCalled = true; },
+            init: () => { initCalled = true; }
+          }
+        });
+
+        initializeHost();
+
+        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin;
+        });
+
+        const args: AddinClientShowFlyoutArgs = {
+          context: {
+            userData: 'some data'
+          },
+          defaultWidth: 600,
+          iteratorNextDisabled: false,
+          iteratorPreviousDisabled: true,
+          maxWidth: 1000,
+          minWidth: 200,
+          permalink: {
+            label: 'some label',
+            url: 'some url'
+          },
+          showIterator: true,
+          url: 'some url'
+        };
+
+        client.showFlyout(args);
+
+        const nextClickMsg: AddinHostMessageEventData = {
+          message: {},
+          messageType: 'flyout-next-click',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(nextClickMsg);
+
+        const previousClickMsg: AddinHostMessageEventData = {
+          message: {},
+          messageType: 'flyout-previous-click',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(previousClickMsg);
+
+        client.destroy();
+
+        expect(initCalled).toBe(true);
+        expect(postedMessage.message.context).toBe(args.context);
+        expect(postedMessage.message.defaultWidth).toBe(args.defaultWidth);
+        expect(postedMessage.message.iteratorNextDisabled).toBe(args.iteratorNextDisabled);
+        expect(postedMessage.message.iteratorPreviousDisabled).toBe(args.iteratorPreviousDisabled);
+        expect(postedMessage.message.maxWidth).toBe(args.maxWidth);
+        expect(postedMessage.message.minWidth).toBe(args.minWidth);
+        expect(postedMessage.message.permalink).toBe(args.permalink);
+        expect(postedMessage.message.showIterator).toBe(args.showIterator);
+        expect(postedMessage.message.url).toBe(args.url);
+        expect(postedMessage.messageType).toBe('show-flyout');
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+
+        expect(flyoutNextClickCalled).toBe(true);
+        expect(flyoutPreviousClickCalled).toBe(true);
+      });
+
+  });
+
   describe('postMessageToHostPage', () => {
 
     it('should warn if origin is invalid.',
@@ -767,7 +849,7 @@ describe('AddinClient ', () => {
         jasmine.clock().install();
         let postedMessage: any;
         let postedOrigin: string;
-        let initArgs = null;
+        let initArgs: AddinClientInitArgs;
 
         const client = new AddinClient({
           callbacks: {
@@ -830,7 +912,10 @@ describe('AddinClient ', () => {
         document.body.style.height = '300px';
         expect(document.body.offsetHeight).toBe(300);
         expect(document.documentElement.offsetHeight).toBe(315);
-        initArgs.ready();
+        expect(initArgs).not.toBe(null);
+        if (initArgs) {
+          initArgs.ready({});
+        }
 
         // Validate message was sent.
         expect(postedMessage.message.height).toBe('315px');
