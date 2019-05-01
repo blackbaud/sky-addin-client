@@ -223,6 +223,15 @@ export class AddinClient {
   }
 
   /**
+   * Requests the host page to close the flyout add-in.
+   */
+  public closeFlyout() {
+    this.postMessageToHostPage({
+      messageType: 'close-flyout'
+    });
+  }
+
+  /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
    */
@@ -323,6 +332,11 @@ export class AddinClient {
           case 'button-click':
             if (this.args.callbacks.buttonClick) {
               this.args.callbacks.buttonClick();
+            }
+            break;
+          case 'flyout-closed':
+            if (this.args.callbacks.flyoutClosed) {
+              this.args.callbacks.flyoutClosed();
             }
             break;
           case 'flyout-next-click':

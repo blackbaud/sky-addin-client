@@ -16,6 +16,11 @@ export interface AddinClientCallbacks {
   buttonClick?: () => void;
 
   /**
+   * Callback raised for flyout parent add-ins indicating that the flyout was closed.
+   */
+  flyoutClosed?: () => void;
+
+  /**
    * Callback raised for flyout add-ins indicating that the next button was clicked.
    */
   flyoutNextClick?: () => void;
