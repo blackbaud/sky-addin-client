@@ -793,6 +793,37 @@ describe('AddinClient ', () => {
 
   });
 
+  describe('close-flyout', () => {
+
+    it('should raise "close-flyout" event.',
+      () => {
+        let postedMessage: any;
+        let postedOrigin: string;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: () => { return; }
+          }
+        });
+
+        initializeHost();
+
+        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin;
+        });
+
+        client.closeFlyout();
+
+        client.destroy();
+
+        expect(postedMessage.message).toBe(undefined);
+        expect(postedMessage.messageType).toBe('close-flyout');
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+      });
+
+  });
+
   describe('postMessageToHostPage', () => {
 
     it('should warn if origin is invalid.',
