@@ -243,6 +243,30 @@ The host page will launch an iframe for the URL provided, and load it as an add-
 
 As with a typical add-in, the flyout add-in should register for the `init` callback and will receive `envId` in the arguments. The `context` field for arguments will match the context object passed into the `showFlyout` call from the parent add-in.  Note that this is crossing iframes so the object has been serialized and deserialized.  It can be used for passing data but not functions.
 
+##### Closing the flyout
+An add-in is able to close the flyout by calling the `closeFlyout` function on the client:
+
+```js
+// Close an open flyout from the client
+var client = new AddinClient({...});
+client.closeFlyout();
+```
+
+The parent add-in can listen to the close event via the `flyoutClosed` Promise returned from `showFlyout`. The Promise will resolve when the flyout is closed:
+
+```js
+// Parent add-in launching a flyout
+var client = new AddinClient({...});
+var flyout = client.showFlyout({
+  url: '<flyout-addin-url>',
+  context: { /* arbitrary context object to pass to flyout */ }
+});
+
+flyout.flyoutClosed.then(() => {
+  // Handle that the flyout is closed.
+});
+```
+
 ## Authentication
 SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
 
