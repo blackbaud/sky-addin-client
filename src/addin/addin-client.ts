@@ -4,6 +4,7 @@ import { AddinClientNavigateArgs } from './client-interfaces/addin-client-naviga
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
 import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
+import { AddinClientShowFlyoutResult } from './client-interfaces/addin-client-show-flyout-result';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
@@ -46,6 +47,11 @@ export class AddinClient {
    * Counter to provide unique ids for each modal request.
    */
   private lastModalRequestId = 0;
+
+  /**
+   * Tracks the current flyout add-in that has been launched from this add-in.
+   */
+  private flyoutRequest: any;
 
   /**
    * The origin of the host page.
@@ -208,18 +214,28 @@ export class AddinClient {
   /**
    * Requests the host page to launch a flyout add-in.
    * @param args Arguments for launching the flyout.
+   * @returns {Promise<any>} Returns a promise that will be resolved when the flyout add-in is closed.
    */
-  public showFlyout(args: AddinClientShowFlyoutArgs) {
-      // assign default values if not specified,
-      // consistent with SKY UX flyout defaults
-      args.defaultWidth = args.defaultWidth || 500;
-      args.maxWidth = args.maxWidth || args.defaultWidth;
-      args.minWidth = args.minWidth || 320;
+  public showFlyout(args: AddinClientShowFlyoutArgs): AddinClientShowFlyoutResult {
+    return {
+      flyoutClosed: new Promise<void>((resolve, reject) => {
+        // assign default values if not specified,
+        // consistent with SKY UX flyout defaults
+        args.defaultWidth = args.defaultWidth || 500;
+        args.maxWidth = args.maxWidth || args.defaultWidth;
+        args.minWidth = args.minWidth || 320;
 
-      this.postMessageToHostPage({
-        message: args,
-        messageType: 'show-flyout'
-      });
+        this.flyoutRequest = {
+          reject,
+          resolve
+        };
+
+        this.postMessageToHostPage({
+          message: args,
+          messageType: 'show-flyout'
+        });
+      })
+    };
   }
 
   /**
@@ -335,8 +351,9 @@ export class AddinClient {
             }
             break;
           case 'flyout-closed':
-            if (this.args.callbacks.flyoutClosed) {
-              this.args.callbacks.flyoutClosed();
+            if (this.flyoutRequest) {
+              this.flyoutRequest.resolve();
+              this.flyoutRequest = undefined;
             }
             break;
           case 'flyout-next-click':

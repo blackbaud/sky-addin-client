@@ -10,6 +10,7 @@ export * from './addin-client-open-help-args';
 export * from './addin-client-ready-args';
 export * from './addin-client-ready-button-config';
 export * from './addin-client-show-flyout-args';
+export * from './addin-client-show-flyout-result';
 export * from './addin-client-show-modal-args';
 export * from './addin-client-show-modal-result';
 export * from './addin-client-show-toast-args';
