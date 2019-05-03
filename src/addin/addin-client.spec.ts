@@ -715,12 +715,13 @@ describe('AddinClient ', () => {
   describe('show-flyout', () => {
 
     it('should raise "show-flyout" event with proper message.',
-      () => {
+      (done) => {
         let postedMessage: any;
         let postedOrigin: string;
         let initCalled: boolean = false;
         let flyoutNextClickCalled: boolean = false;
         let flyoutPreviousClickCalled: boolean = false;
+        let flyoutClosedCalled: boolean = false;
 
         const client = new AddinClient({
           callbacks: {
@@ -754,7 +755,10 @@ describe('AddinClient ', () => {
           url: 'some url'
         };
 
-        client.showFlyout(args);
+        client.showFlyout(args)
+          .flyoutClosed.then(() => {
+            flyoutClosedCalled = true;
+          });
 
         const nextClickMsg: AddinHostMessageEventData = {
           message: {},
@@ -771,6 +775,14 @@ describe('AddinClient ', () => {
         };
 
         postMessageFromHost(previousClickMsg);
+
+        const closedMsg: AddinHostMessageEventData = {
+          message: {},
+          messageType: 'flyout-closed',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(closedMsg);
 
         client.destroy();
 
@@ -789,6 +801,12 @@ describe('AddinClient ', () => {
 
         expect(flyoutNextClickCalled).toBe(true);
         expect(flyoutPreviousClickCalled).toBe(true);
+
+        // Delay the vaildation until after the post message is done.
+        setTimeout(() => {
+          expect(flyoutClosedCalled).toBe(true);
+          done();
+        }, 100);
       });
 
   });
