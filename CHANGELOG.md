@@ -1,3 +1,8 @@
+# 1.0.11 (2019-05-03)
+
+- Added a `closeFlyout` method to allow developers to close a flyout panel.
+- The `showFlyout` method will now return a Promise which will resolve when the flyout is closed.
+
 # 1.0.10 (2019-04-16)
 
 - Added a `showFlyout` method to allow developers to display supplementary information in a flyout panel.
