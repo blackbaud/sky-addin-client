@@ -16,8 +16,8 @@ export interface AddinClientShowConfirmArgs {
   body?: string;
 
   /**
-   * Specifies an array of SkyConfirmButtonConfig objects that overwrite the default
-   * configuration for buttons.
+   * Specifies an array of AddinConfirmButton objects that defines the
+   * configuration for the confirm dialog's buttons.
    */
-  buttons?: AddinConfirmButton[];
+  buttons: AddinConfirmButton[];
 }

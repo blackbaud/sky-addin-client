@@ -3,6 +3,8 @@ import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-clos
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
+import { AddinClientShowConfirmArgs } from './client-interfaces/addin-client-show-confirm-args';
+import { AddinClientShowErrorArgs } from './client-interfaces/addin-client-show-error-args';
 import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
 import { AddinClientShowFlyoutResult } from './client-interfaces/addin-client-show-flyout-result';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
@@ -52,6 +54,11 @@ export class AddinClient {
    * Tracks the current flyout add-in that has been launched from this add-in.
    */
   private flyoutRequest: any;
+
+  /**
+   * Tracks the current confirm dialog that has been launched from this add-in.
+   */
+  private confirmRequest: any;
 
   /**
    * The origin of the host page.
@@ -248,6 +255,37 @@ export class AddinClient {
   }
 
   /**
+   * Requests the host page to show a confirm dialog.
+   * @param args Arguments for showing a confirm dialog.
+   * @returns {Promise<string>} Returns a promise that will resolve with the
+   * confirm action when the dialog is closed.
+   */
+  public showConfirm(args: AddinClientShowConfirmArgs): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.confirmRequest = {
+        reject,
+        resolve
+      };
+
+      this.postMessageToHostPage({
+        message: args,
+        messageType: 'show-confirm'
+      });
+    });
+  }
+
+  /**
+   * Informs the host to show an error dialog.
+   * @param args Arguments for showing an error dialog.
+   */
+  public showError(args: AddinClientShowErrorArgs): void {
+    this.postMessageToHostPage({
+      message: args,
+      messageType: 'show-error'
+    });
+  }
+
+  /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
    */
@@ -348,6 +386,11 @@ export class AddinClient {
           case 'button-click':
             if (this.args.callbacks.buttonClick) {
               this.args.callbacks.buttonClick();
+            }
+            break;
+          case 'confirm-closed':
+            if (this.confirmRequest) {
+              this.confirmRequest.resolve(data.message.reason);
             }
             break;
           case 'flyout-closed':

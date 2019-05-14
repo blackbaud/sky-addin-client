@@ -1,13 +1,13 @@
 import { AddinConfirmButtonStyle } from './addin-confirm-button-style';
 
 /**
- * Interface for confirm button configuration.
+ * Interface for confirm dialog button configuration.
  */
 export interface AddinConfirmButton {
 
   /**
    * Specifies an identifier to return when users select the button to close
-   * the confirmation dialog. This is useful to determine which button users select.
+   * the confirm dialog. This is useful to determine which button users select.
    */
   action: string;
 
@@ -22,7 +22,7 @@ export interface AddinConfirmButton {
   autofocus?: boolean;
 
   /**
-   * Specifies specific styling to apply to the button.
+   * Specifies specific styling to apply to the button. (Default: AddinConfirmButtonStyle.Default)
    */
   style?: AddinConfirmButtonStyle;
 }
