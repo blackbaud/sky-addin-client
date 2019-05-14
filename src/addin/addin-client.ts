@@ -391,6 +391,7 @@ export class AddinClient {
           case 'confirm-closed':
             if (this.confirmRequest) {
               this.confirmRequest.resolve(data.message.reason);
+              this.confirmRequest = undefined;
             }
             break;
           case 'flyout-closed':
