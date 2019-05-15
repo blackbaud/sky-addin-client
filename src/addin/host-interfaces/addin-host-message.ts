@@ -31,7 +31,7 @@ export interface AddinHostMessage {
 
   /**
    * Generic field for passing information about the request, such as the explanation for a
-   * auth-token-fail message.
+   * auth-token-fail message or action message for closing a dialog.
    */
   reason?: string;
 

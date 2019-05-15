@@ -267,6 +267,48 @@ flyout.flyoutClosed.then(() => {
 });
 ```
 
+#### Showing a confirm dialog
+
+The add-in can instruct the parent page to show a confirm dialog. To do this, call the `showConfirm` method on the `AddinClient` object. This function takes an object argument with properties `message`, `body`, and `buttons` representing the title, body, and buttons to display on the confirm dialog.
+
+```js
+var client = new AddinClient({...});
+client.showConfirm(
+  {
+    message: 'confirm title',
+    body: 'confirm message body',
+    buttons: [
+      {
+        action: 'ok',
+        text: 'OK',
+        autofocus: true,
+        style: AddinConfirmButtonStyle.Primary
+      },
+      {
+        action: 'cancel',
+        text: 'Cancel',
+        style: AddinConfirmButtonStyle.Link
+      }
+    ]
+  }).then((action: string) {
+    // Handle the action returned from the confirm dialog.
+  });
+```
+
+#### Showing an error dialog
+
+The add-in can instruct the parent page to show an error dialog. To do this, call the `showError` method on the `AddinClient` object. This function takes an object argument with properties `closeText`, `description` and `title` representing the button text, desciption of error, and title of error to display on the error dialog.
+
+```js
+var client = new AddinClient({...});
+client.showError(
+  {
+    closeText: 'OK',
+    description: 'An unexpected error occurred',
+    title: 'Error'
+  });
+```
+
 ## Authentication
 SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
 

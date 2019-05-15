@@ -1,3 +1,10 @@
+# 1.0.12 (2019-05-14)
+
+- Added a `showConfirm` method to allow developers to show a confirm dialog with a title, description body,
+and button configuration containing custom actions to return when the dialog closes.
+- Added a `showError` method to allow developers to show an error dialog with a title, error description, and
+text for the close button.
+
 # 1.0.11 (2019-05-03)
 
 - Added a `closeFlyout` method to allow developers to close a flyout panel.

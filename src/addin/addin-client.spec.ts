@@ -4,9 +4,12 @@ import { AddinClientInitArgs } from './client-interfaces/addin-client-init-args'
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
+import { AddinClientShowConfirmArgs } from './client-interfaces/addin-client-show-confirm-args';
+import { AddinClientShowErrorArgs } from './client-interfaces/addin-client-show-error-args';
 import { AddinClientShowFlyoutArgs } from './client-interfaces/addin-client-show-flyout-args';
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
+import { AddinConfirmButtonStyle } from './client-interfaces/addin-confirm-button-style';
 import { AddinToastStyle } from './client-interfaces/addin-toast-style';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
@@ -837,6 +840,110 @@ describe('AddinClient ', () => {
 
         expect(postedMessage.message).toBe(undefined);
         expect(postedMessage.messageType).toBe('close-flyout');
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+      });
+
+  });
+
+  describe('show-confirm', () => {
+
+    it('should raise "show-confirm" event with proper message.',
+      (done) => {
+        let postedMessage: any;
+        let postedOrigin: string;
+        let confirmAction: string;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: () => { return; }
+          }
+        });
+
+        initializeHost();
+
+        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin;
+        });
+
+        const args: AddinClientShowConfirmArgs = {
+          body: 'Confirm dialog body text',
+          buttons: [
+            {
+              action: 'action 1',
+              text: 'Action 1'
+            },
+            {
+              action: 'action 2',
+              autofocus: true,
+              style: AddinConfirmButtonStyle.Primary,
+              text: 'Action 2'
+            }
+          ],
+          message: 'This is a confirm'
+        };
+
+        client.showConfirm(args)
+          .then((result) => {
+            confirmAction = result;
+          });
+
+        const closedMsg: AddinHostMessageEventData = {
+          message: {
+            reason: 'some action'
+          },
+          messageType: 'confirm-closed',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(closedMsg);
+
+        client.destroy();
+
+        expect(postedMessage.message.message).toBe(args.message);
+        expect(postedMessage.messageType).toBe('show-confirm');
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+
+        // Delay the vaildation until after the post message is done.
+        setTimeout(() => {
+          expect(confirmAction).toBe('some action');
+          done();
+        }, 100);
+      });
+  });
+
+  describe('show-error', () => {
+
+    it('should raise "show-error" event with proper message.',
+      () => {
+        let postedMessage: any;
+        let postedOrigin: string;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: () => { return; }
+          }
+        });
+
+        initializeHost();
+
+        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin;
+        });
+
+        const args: AddinClientShowErrorArgs = {
+          closeText: 'Close',
+          description: 'Error desc',
+          title: 'Error title'
+        };
+
+        client.showError(args);
+
+        client.destroy();
+
+        expect(postedMessage.message).toBe(args);
+        expect(postedMessage.messageType).toBe('show-error');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
       });
 
