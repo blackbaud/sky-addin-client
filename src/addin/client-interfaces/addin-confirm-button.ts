@@ -8,6 +8,9 @@ export interface AddinConfirmButton {
   /**
    * Specifies an identifier to return when users select the button to close
    * the confirm dialog. This is useful to determine which button users select.
+   *
+   * Note: An action identifier of "close" is returned when the confirm dialog
+   * is closed using the Esc key or using the dialog's "x" icon.
    */
   action: string;
 
