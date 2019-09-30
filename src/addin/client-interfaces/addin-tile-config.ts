@@ -30,4 +30,8 @@ export interface AddinTileConfig {
    */
   showSettings?: boolean;
 
+  /**
+   * Indicates whether to enable padding around tile content (Default: true)
+   */
+  paddingEnabled?: boolean;
 }

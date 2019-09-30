@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/sky-addin-client",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "SKY add-in client",
   "main": "dist/bundles/sky-addin-client.umd.js",
   "module": "index.ts",

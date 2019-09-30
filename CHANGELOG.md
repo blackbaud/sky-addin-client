@@ -1,3 +1,7 @@
+# 1.0.13 (2019-09-30)
+
+- Add `paddingEnabled` property to `AddinTileConfig` to determine whether to enable padding around tile content (Default: true)
+
 # 1.0.12 (2019-05-14)
 
 - Added a `showConfirm` method to allow developers to show a confirm dialog with a title, description body,
