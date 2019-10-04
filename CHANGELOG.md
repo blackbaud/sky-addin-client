@@ -1,3 +1,8 @@
+# 1.0.13 (2019-10-04)
+
+- Added `removeInset` property to `AddinTileConfig` to specify whether the tile content inset should be removed
+which allows the content to extend all the way to the edge of the tile container (Default: false)
+
 # 1.0.12 (2019-05-14)
 
 - Added a `showConfirm` method to allow developers to show a confirm dialog with a title, description body,
