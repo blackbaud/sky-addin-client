@@ -31,7 +31,8 @@ export interface AddinTileConfig {
   showSettings?: boolean;
 
   /**
-   * Indicates whether to enable padding around tile content (Default: true)
+   * Indicates whether the tile content inset should be removed which allows
+   * the content to extend all the way to the edge of the tile container (Default: false)
    */
-  paddingEnabled?: boolean;
+  removeInset?: boolean;
 }

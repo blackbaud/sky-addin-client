@@ -1,6 +1,7 @@
-# 1.0.13 (2019-09-30)
+# 1.0.13 (2019-10-04)
 
-- Add `paddingEnabled` property to `AddinTileConfig` to determine whether to enable padding around tile content (Default: true)
+- Add `removeInset` property to `AddinTileConfig` to specify whether the tile content inset should be removed
+which allows the content to extend all the way to the edge of the tile container (Default: false)
 
 # 1.0.12 (2019-05-14)
 
