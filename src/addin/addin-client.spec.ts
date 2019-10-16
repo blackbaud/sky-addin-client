@@ -38,10 +38,14 @@ function initializeHost() {
 }
 
 describe('AddinClient ', () => {
+  let returnEmptyQueryString: boolean = false;
 
   // Set the addinId query string.
   (AddinClient as any).getQueryString = () => {
-    return '?test=value&addinId=test_id&test2=value2';
+    if (returnEmptyQueryString) {
+      return '';
+    }
+    return 'test=value&addinId=test_id&test2=value2';
   };
 
   describe('constructor', () => {
@@ -181,6 +185,52 @@ describe('AddinClient ', () => {
 
         expect(buttonClickCalled).toBe(false);
       });
+
+    describe('host-init', () => {
+      beforeAll(() => {
+        returnEmptyQueryString = true;
+      });
+
+      afterAll(() => {
+        returnEmptyQueryString = false;
+      });
+
+      it('should raise "ready" message to "*" on host-init when addinId is undefined or empty.', () => {
+
+        let post: any;
+
+        window.parent.postMessage = (message, targetOrigin) => {
+          post = {
+            message,
+            targetOrigin
+          };
+        };
+
+        const client = new AddinClient({
+          callbacks: {
+            init: () => { return; }
+          }
+        });
+
+        const msg: AddinHostMessageEventData = {
+          message: {
+            addinId: 'test_id_from_host_init'
+          },
+          messageType: 'host-init',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(msg);
+
+        client.destroy();
+
+        expect(post.message.messageType).toBe('ready');
+        expect(post.message.source).toBe('bb-addin-client');
+        expect(post.message.addinId).toBe('test_id_from_host_init');
+        expect(post.targetOrigin).toBe('*');
+
+      });
+    });
 
     describe('button-click', () => {
 
@@ -812,6 +862,63 @@ describe('AddinClient ', () => {
         }, 100);
       });
 
+    it('should raise "show-flyout" event with message containing default with values.',
+      (done) => {
+      let postedMessage: any;
+      let postedOrigin: string;
+      let initCalled: boolean = false;
+      let flyoutClosedCalled: boolean = false;
+
+      const client = new AddinClient({
+        callbacks: {
+          init: () => { initCalled = true; }
+        }
+      });
+
+      initializeHost();
+
+      spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        postedMessage = message;
+        postedOrigin = targetOrigin;
+      });
+
+      const args: AddinClientShowFlyoutArgs = {
+        context: {
+          userData: 'some data'
+        },
+        url: 'some url'
+      };
+
+      client.showFlyout(args)
+        .flyoutClosed.then(() => {
+          flyoutClosedCalled = true;
+        });
+
+      const closedMsg: AddinHostMessageEventData = {
+        message: {},
+        messageType: 'flyout-closed',
+        source: 'bb-addin-host'
+      };
+
+      postMessageFromHost(closedMsg);
+
+      client.destroy();
+
+      expect(initCalled).toBe(true);
+      expect(postedMessage.message.context).toBe(args.context);
+      expect(postedMessage.message.defaultWidth).toBe(500);
+      expect(postedMessage.message.maxWidth).toBe(500);
+      expect(postedMessage.message.minWidth).toBe(320);
+      expect(postedMessage.message.url).toBe(args.url);
+      expect(postedMessage.messageType).toBe('show-flyout');
+      expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+
+      // Delay the vaildation until after the post message is done.
+      setTimeout(() => {
+        expect(flyoutClosedCalled).toBe(true);
+        done();
+      }, 100);
+    });
   });
 
   describe('close-flyout', () => {

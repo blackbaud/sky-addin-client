@@ -66,6 +66,11 @@ export class AddinClient {
   private trustedOrigin: string;
 
   /**
+   * The addin ID for this client.
+   */
+  private addinId: string;
+
+  /**
    * A message handler listening to post-message events from the host page.
    */
   private windowMessageHandler: (event: MessageEvent) => void;
@@ -349,7 +354,17 @@ export class AddinClient {
     const data = event.data as AddinHostMessageEventData;
 
     if (data && data.source === 'bb-addin-host') {
-      if (data.messageType === 'host-ready') {
+      if (data.messageType === 'host-init') {
+        // if addinId couldn't be obtained earlier from the URL query string,
+        // then we can get it from the 'host-init' message.
+        // Otherwise, just ignore this message
+        if (!this.addinId) {
+          this.addinId = data.message.addinId;
+
+          // Inform the host page that the add-in is loaded and listening for messages.
+          this.raiseAddinReadyMessage();
+        }
+      } else if (data.messageType === 'host-ready') {
         // The 'host-ready' message is the only message that's not validated against
         // the host origin since that is what's being established in the message.
         // This MUST be the first message posted by the host page or all further
@@ -483,7 +498,10 @@ export class AddinClient {
    */
   private postMessageToHostPage(message: any, targetOrigin?: string) {
     message.source = 'bb-addin-client';
-    message.addinId = this.getQueryVariable('addinId');
+    message.addinId = this.getAddinId();
+    if (!message.addinId) {
+      return;
+    }
 
     targetOrigin = targetOrigin || this.trustedOrigin;
 
@@ -519,6 +537,9 @@ export class AddinClient {
    */
   private getQueryVariable(variable: any) {
     const query = AddinClient.getQueryString().substring(1);
+    if (!query) {
+      return undefined;
+    }
     const vars = query.split('&');
     for (const v of vars) {
       const pair = v.split('=');
@@ -526,6 +547,14 @@ export class AddinClient {
         return decodeURIComponent(pair[1]);
       }
     }
+  }
+
+  private getAddinId() {
+    if (!this.addinId) {
+      this.addinId = this.getQueryVariable('addinId');
+    }
+
+    return this.addinId;
   }
 
 }

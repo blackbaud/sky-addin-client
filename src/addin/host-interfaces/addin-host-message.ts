@@ -35,4 +35,13 @@ export interface AddinHostMessage {
    */
   reason?: string;
 
+  /**
+   * Identifier for the current add-in being handled by the client.
+   */
+  addinId?: string;
+
+  /**
+   * The origin URL of the host page.
+   */
+  origin?: string;
 }
