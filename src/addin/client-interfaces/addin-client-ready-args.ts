@@ -1,4 +1,5 @@
 import { AddinButtonConfig } from './addin-button-config';
+import { AddinModalConfig } from './addin-modal-config';
 import { AddinTileConfig } from './addin-tile-config';
 
 /**
@@ -26,4 +27,9 @@ export interface AddinClientReadyArgs {
    * Provides additional configuration for Tile add-ins
    */
   tileConfig?: AddinTileConfig;
+
+ /**
+  * Provides additional configuration for Modal add-ins
+  */
+  modalConfig?: AddinModalConfig;
 }
