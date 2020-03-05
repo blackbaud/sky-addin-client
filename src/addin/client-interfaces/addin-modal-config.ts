@@ -6,9 +6,8 @@ export interface AddinModalConfig {
   /**
    * Indicates that the modal is configured to display full screen (Default: false)
    *
-   * The appropriate adjustments should be made to the host page when
-   * a modal is configured to display full-page. For example, hide the
-   * help button when its display conflicts with a full-page modal.
+   * When true, this instructs the host application to adjust the display
+   * appropriately for a full-page modal.
    */
   fullPage?: boolean;
 }
