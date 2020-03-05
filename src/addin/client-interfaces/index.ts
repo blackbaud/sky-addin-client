@@ -18,6 +18,7 @@ export * from './addin-client-show-modal-result';
 export * from './addin-client-show-toast-args';
 export * from './addin-confirm-button';
 export * from './addin-confirm-button-style';
+export * from './addin-modal-config';
 export * from './addin-tab-summary-style';
 export * from './addin-tile-config';
 export * from './addin-tile-summary-style';
