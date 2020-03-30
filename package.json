@@ -21,6 +21,10 @@
     "uglifyjs": "uglifyjs",
     "webpack": "webpack"
   },
+  "piplineSettings": {
+    "publishToCDN": true,
+    "publishToNPM": true
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blackbaud/sky-addin-client.git"
