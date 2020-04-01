@@ -89,6 +89,7 @@ describe('AddinClient ', () => {
 
         spyOn(client, 'getUserIdentityToken').and.callFake(() => {
           delegated = true;
+          return Promise.resolve('');
         });
 
         client.getAuthToken();
