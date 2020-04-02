@@ -1,4 +1,8 @@
-# 1.0.14 (2020-3-4)
+# 1.0.15 (2020-04-02)
+
+- Updated `devDependencies` and instructions for consuming from CDN.
+
+# 1.0.14 (2020-03-04)
 
 - Added `AddinModalConfig` with optional `fullPage` property (Default: false) to indicate if a modal add-in will be
 displayed full page.
