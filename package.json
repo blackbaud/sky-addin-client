@@ -21,7 +21,7 @@
     "uglifyjs": "uglifyjs",
     "webpack": "webpack"
   },
-  "piplineSettings": {
+  "pipelineSettings": {
     "publishToCDN": true,
     "publishToNPM": true
   },
