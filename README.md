@@ -29,10 +29,10 @@ If you're not using a module loader or prefer to reference the file via CDN, you
 
 If using NPM, add a reference to `dist/bundles/sky-addin-client.umd.js` or concatenate that file with the rest of your page's JavaScript.
 
-If using the SKY UX CDN, add a reference to `https://sky.blackbaudcdn.net/static/sky-addin-client/[VERSION]/auth-client.global.min.js`, where `[VERSION]` is the version you'd like to use.  Starting with version `1.0.15`, All versions published to NPM are also available through the CDN.  You can also reference the latest major version. Example versions:
+If using the SKY UX CDN, add a reference to `https://sky.blackbaudcdn.net/static/sky-addin-client/[VERSION]/sky-addin-client.umd.min.js`, where `[VERSION]` is the version you'd like to use.  Starting with version `1.0.15`, All versions published to NPM are also available through the CDN.  You can also reference the latest major version. Example versions:
 
-- `https://sky.blackbaudcdn.net/static/sky-addin-client/1.0.15/sky-addin-client.global.min.js`
-- `https://sky.blackbaudcdn.net/static/sky-addin-client/1/sky-addin-client.global.min.js`
+- `https://sky.blackbaudcdn.net/static/sky-addin-client/1.0.15/sky-addin-client.umd.min.js`
+- `https://sky.blackbaudcdn.net/static/sky-addin-client/1/sky-addin-client.umd.min.js`
 
 You can now access it via the global `BBSkyAddinClient` variable:
 
