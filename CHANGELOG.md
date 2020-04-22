@@ -1,3 +1,6 @@
+# 1.0.16 (2020-04-22)
+- Added `showWait` and `hideWait` methods to allow developers to show/hide a page-blocking-wait, respectively.
+
 # 1.0.15 (2020-04-02)
 
 - Updated `devDependencies` and instructions for consuming from CDN.
