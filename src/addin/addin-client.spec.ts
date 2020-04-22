@@ -994,6 +994,50 @@ describe('AddinClient ', () => {
 
   });
 
+  describe('hideWait', () => {
+    let client: AddinClient;
+    let spyPostMessage: jasmine.Spy;
+
+    beforeEach(() => {
+      client = new AddinClient({
+        callbacks: {
+          init: () => { }
+        }
+      });
+      spyPostMessage = spyOn(window.parent, 'postMessage');
+      spyPostMessage.and.stub();
+
+      initializeHost();
+
+      spyPostMessage.calls.reset();
+    });
+
+    afterEach(() => {
+      client.destroy();
+    });
+
+    it('should raise "hide-wait" event.',
+      () => {
+        const expected: any = jasmine.objectContaining({
+          messageType: 'hide-wait'
+        });
+
+        client.hideWait();
+
+        expect(window.parent.postMessage).toHaveBeenCalledWith(expected, jasmine.any(String));
+      });
+
+    it('should use trusted host.',
+      () => {
+        const expected: string = TEST_HOST_ORIGIN;
+
+        client.hideWait();
+
+        expect(window.parent.postMessage).toHaveBeenCalledWith(jasmine.any(Object), expected);
+      });
+
+  });
+
   describe('postMessageToHostPage', () => {
 
     it('should warn if origin is invalid.',
