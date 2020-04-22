@@ -319,6 +319,22 @@ client.showError(
   });
 ```
 
+#### Page-blocking wait indicator
+The add-in can instruct the parent page to show a page-blocking wait indicator. To do this, call the `showWait` method on the `AddinClient` object.
+
+```js
+var client = new AddinClient({...});
+client.showWait();
+```
+
+##### Ending the wait indicator
+An add-in is able to end the wait indicator by calling the `hideWait` function on the client:
+
+```js
+var client = new AddinClient({...});
+client.hideWait();
+```
+
 ## Authentication
 SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
 
