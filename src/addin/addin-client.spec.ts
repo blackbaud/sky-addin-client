@@ -957,7 +957,7 @@ describe('AddinClient ', () => {
     beforeEach(() => {
       client = new AddinClient({
         callbacks: {
-          init: () => { }
+          init: () => { return; }
         }
       });
       spyPostMessage = spyOn(window.parent, 'postMessage');
@@ -1001,7 +1001,7 @@ describe('AddinClient ', () => {
     beforeEach(() => {
       client = new AddinClient({
         callbacks: {
-          init: () => { }
+          init: () => { return; }
         }
       });
       spyPostMessage = spyOn(window.parent, 'postMessage');
