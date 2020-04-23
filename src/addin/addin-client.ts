@@ -286,6 +286,24 @@ export class AddinClient {
   }
 
   /**
+   * Requests the host page to show the page blocking wait indicator.
+   */
+  public showWait(): void {
+    this.postMessageToHostPage({
+      messageType: 'show-wait'
+    });
+  }
+
+  /**
+   * Requests the host page to hide the page blocking wait indicator.
+   */
+  public hideWait(): void {
+    this.postMessageToHostPage({
+      messageType: 'hide-wait'
+    });
+  }
+
+  /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
    */
