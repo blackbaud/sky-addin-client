@@ -238,11 +238,11 @@ describe('AddinClient ', () => {
 
       it('should call the "updateContext" callback.',
         () => {
-          let contextUpdated = false;
+          let contextUpdated: boolean = false;
 
           const client = new AddinClient({
             callbacks: {
-              updateContext: () => { contextUpdated = true; },
+              updateContext: (contextId) => { contextUpdated = true; },
               init: () => { return; }
             }
           });
@@ -250,7 +250,7 @@ describe('AddinClient ', () => {
           initializeHost();
 
           const msg: AddinHostMessageEventData = {
-            message: {},
+            message: {context: {id:'123'}},
             messageType: 'update-context',
             source: 'bb-addin-host'
           };
@@ -258,7 +258,7 @@ describe('AddinClient ', () => {
           postMessageFromHost(msg);
           client.destroy();
 
-          expect(contextUpdated).toBe(true);
+          expect(contextUpdated).toBeTrue();
         });
 
       it('should tolerate the "updateContext" callback being undefined.',

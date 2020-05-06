@@ -408,7 +408,7 @@ export class AddinClient {
             break;
           case 'update-context':
             if (this.args.callbacks.updateContext) {
-              this.args.callbacks.updateContext();
+              this.args.callbacks.updateContext(data.message);
             }
             break;
           case 'confirm-closed':

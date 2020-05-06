@@ -18,7 +18,7 @@ export interface AddinClientCallbacks {
   /**
    * Callback raised indicating context was updated by the host.
    */
-  updateContext?: () => void;
+  updateContext?: (context: any) => void;
 
   /**
    * Callback raised for tile add-ins indicating that the flyout's next button was clicked.

@@ -1,5 +1,5 @@
 # 1.0.17 (2020-05-06)
-- Added `updateContext` method to allow child addin to receive updated context information from parent.
+- Added `updateContext` callback to notify add-in when context information has been updated.
 
 
 # 1.0.16 (2020-04-22)
