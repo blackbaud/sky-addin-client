@@ -234,6 +234,58 @@ describe('AddinClient ', () => {
 
     });
 
+    describe('update-context', () => {
+
+      it('should call the "updateContext" callback.',
+        () => {
+          let contextUpdated: boolean = false;
+
+          const client = new AddinClient({
+            callbacks: {
+              updateContext: (contextId) => { contextUpdated = true; },
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {context: {id:'123'}},
+            messageType: 'update-context',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          expect(contextUpdated).toBeTrue();
+        });
+
+      it('should tolerate the "updateContext" callback being undefined.',
+        () => {
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'update-context',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          // No assertion.  Just don't fail.
+        });
+
+    });
+
+
     describe('help-click', () => {
 
       it('should call the "helpClick" callback.',

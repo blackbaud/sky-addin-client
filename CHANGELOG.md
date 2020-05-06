@@ -1,3 +1,7 @@
+# 1.0.17 (2020-05-06)
+- Added `updateContext` callback to notify add-in when context information has been updated.
+
+
 # 1.0.16 (2020-04-22)
 - Added `showWait` and `hideWait` methods to allow developers to show/hide a page-blocking-wait, respectively.
 
