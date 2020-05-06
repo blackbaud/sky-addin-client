@@ -406,6 +406,11 @@ export class AddinClient {
               this.args.callbacks.buttonClick();
             }
             break;
+          case 'update-context':
+            if (this.args.callbacks.updateContext) {
+              this.args.callbacks.updateContext();
+            }
+            break;
           case 'confirm-closed':
             if (this.confirmRequest) {
               this.confirmRequest.resolve(data.message.reason);
