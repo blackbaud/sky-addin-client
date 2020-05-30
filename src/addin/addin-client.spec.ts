@@ -1137,6 +1137,67 @@ describe('AddinClient ', () => {
         expect(consoleWarningIssued).toBe(true);
       });
 
+    [
+      'https://test.blackbaud.com',
+      'https://test-site.blackbaud.com',
+      'https://test.blackbaud-dev.com',
+      'https://test-site.blackbaud-dev.com',
+      'http://test.blackbaud-dev.com',
+      'http://test-site.blackbaud-dev.com',
+      'https://test.blackbaudhosting.com',
+      'https://test-site.blackbaudhosting.com',
+      'https://test.blackbaudhosting.com',
+      'https://test-site.blackbaudhosting.com',
+      'https://test.bbcloudservices.com',
+      'https://test-site.bbcloudservices.com',
+      'https://localhost',
+      'https://localhost:8080'
+    ].forEach((url) => {
+      it(`should not warn because ${url} is allowed.`,
+        () => {
+          let messageWasSentFromAddin = false;
+          let consoleWarningIssued = false;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: () => {
+                return;
+              }
+            }
+          });
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'host-ready',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg, url);
+
+          // Spy on messages from the add-in to make sure it does post.
+          spyOn(window.parent, 'postMessage').and.callFake(() => {
+            messageWasSentFromAddin = true;
+          });
+
+          // Spy on messages from the add-in to make sure it doesn't warn.
+          spyOn(console, 'warn').and.callFake(() => {
+            consoleWarningIssued = true;
+          });
+
+          const args: AddinClientNavigateArgs = {
+            url: 'https://renxt.blackbaud.com?test=1'
+          };
+
+          // Call navigate to trigger posting a message to the host.
+          // Should result in a successful post and no warning because the host origin is valid.
+          client.navigate(args);
+
+          client.destroy();
+
+          expect(messageWasSentFromAddin).toBe(true);
+          expect(consoleWarningIssued).toBe(false);
+        });
+    });
   });
 
   describe('trackHeightChangesOfAddinContent', () => {
