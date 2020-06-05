@@ -1,3 +1,6 @@
+# 1.0.18 (2020-06-04)
+- Fixed a bug where localhost required a port in the allowed origins list. [#40](https://github.com/blackbaud/sky-addin-client/pull/40) (Thanks [@MatthewMazaika](https://github.com/MatthewMazaika)!)
+
 # 1.0.17 (2020-05-06)
 - Added `updateContext` callback to notify add-in when context information has been updated.
 
