@@ -1164,7 +1164,21 @@ describe('AddinClient ', () => {
       'https://test-site.bbcloudservices.com',
       'https://view-my.test_site.bbcloudservices.com',
       'https://localhost',
-      'https://localhost:8080'
+      'https://localhost:8080',
+      'https://secure2.convio.net',
+      'https://secure3.convio.net',
+      'https://secure8.convio.net',
+      'https://testweb.convio.com',
+      'https://test.blackbaudcloud.com',
+      'https://my.test.blackbaudcloud.com',
+      'https://test_site.blackbaudcloud.com',
+      'https://test-site.blackbaudcloud.com',
+      'https://view-my.test_site.blackbaudcloud.com',
+      'https://test.conviocloud.com',
+      'https://my.test.conviocloud.com',
+      'https://test_site.conviocloud.com',
+      'https://test-site.conviocloud.com',
+      'https://view-my.test_site.conviocloud.com'
     ].forEach((url) => {
       it(`should not warn because ${url} is allowed.`,
         () => {
