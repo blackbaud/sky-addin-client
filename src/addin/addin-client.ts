@@ -12,6 +12,7 @@ import { AddinClientShowModalResult } from './client-interfaces/addin-client-sho
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
+import { AddinClientEventArgs } from './client-interfaces/addin-client-event-args';
 
 /**
  * Collection of regexs for our whitelist of host origins.
@@ -79,6 +80,8 @@ export class AddinClient {
    * Tracks the last height posted to the host page.
    */
   private lastPostedIframeHeight: number;
+
+  private registeredAddinEvents: {[key: string]: (context: any) => void} = {};
 
   /* istanbul ignore next */
   /**
@@ -303,6 +306,10 @@ export class AddinClient {
     });
   }
 
+  public addEventHandler(eventType: string, callback: (context: any) => void) {
+    this.registeredAddinEvents[eventType] = callback;
+  }
+
   /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
@@ -407,6 +414,7 @@ export class AddinClient {
             }
             break;
           case 'update-context':
+            console.log('update-context received: ', data.message);
             if (this.args.callbacks.updateContext) {
               this.args.callbacks.updateContext(data.message);
             }
@@ -442,6 +450,9 @@ export class AddinClient {
             if (this.args.callbacks.settingsClick) {
               this.args.callbacks.settingsClick();
             }
+            break;
+          case 'host-event':
+            this.processHostEvent(data.message);
             break;
 
         }
@@ -515,6 +526,21 @@ export class AddinClient {
     } else {
       this.warnInvalidOrigin();
     }
+  }
+
+  private processHostEvent(message: AddinHostMessage) {
+    const eventArgs: AddinClientEventArgs = message.context;
+    const callback = this.registeredAddinEvents[eventArgs.type];
+    if (callback) {
+      callback(eventArgs.context);
+    }
+
+    this.postMessageToHostPage({
+      message: {
+        eventRequestId: message.eventRequestId
+      },
+      messageType: 'event-received'
+    });
   }
 
   /**

@@ -3,6 +3,7 @@ export * from './addin-button-style';
 export * from './addin-client-args';
 export * from './addin-client-callbacks';
 export * from './addin-client-close-modal-args';
+export * from './addin-client-event-args';
 export * from './addin-client-flyout-permalink';
 export * from './addin-client-init-args';
 export * from './addin-client-navigate-args';
