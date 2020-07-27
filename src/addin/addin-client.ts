@@ -81,6 +81,11 @@ export class AddinClient {
    */
   private lastPostedIframeHeight: number;
 
+  /**
+   * Stores the registered add-in events.
+   * Key - the event type.
+   * Value - The callback function to be executed when the event type occurs.
+   */
   private registeredAddinEvents: {[key: string]: (context: any) => void} = {};
 
   /* istanbul ignore next */
@@ -306,6 +311,11 @@ export class AddinClient {
     });
   }
 
+  /**
+   * Regiesters a callback to be executed when the specified event type occurs.
+   * @param eventType The event type to process.
+   * @param callback The callback to executes when the event occurs.
+   */
   public addEventHandler(eventType: string, callback: (context: any) => void) {
     this.registeredAddinEvents[eventType] = callback;
   }
@@ -414,7 +424,6 @@ export class AddinClient {
             }
             break;
           case 'update-context':
-            console.log('update-context received: ', data.message);
             if (this.args.callbacks.updateContext) {
               this.args.callbacks.updateContext(data.message);
             }
@@ -528,6 +537,12 @@ export class AddinClient {
     }
   }
 
+  /**
+   * Processes an add-in event that occurs from the host and responds
+   * back to the host with an 'event-received' message.
+   * @param message The message to process by looking up executing the registered callback
+   * that matches the event type.
+   */
   private processHostEvent(message: AddinHostMessage) {
     const eventArgs: AddinClientEventArgs = message.context;
     const callback = this.registeredAddinEvents[eventArgs.type];
