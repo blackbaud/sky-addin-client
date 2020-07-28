@@ -12,6 +12,7 @@ import { AddinClientShowModalResult } from './client-interfaces/addin-client-sho
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
+import { AddinClientEventArgs } from './client-interfaces/addin-client-event-args';
 
 /**
  * Collection of regexs for our whitelist of host origins.
@@ -83,6 +84,13 @@ export class AddinClient {
    * Tracks the last height posted to the host page.
    */
   private lastPostedIframeHeight: number;
+
+  /**
+   * Stores the registered add-in events.
+   * Key - the event type.
+   * Value - The callback function to be executed when the event type occurs.
+   */
+  private registeredAddinEvents: {[key: string]: (context: any) => void} = {};
 
   /* istanbul ignore next */
   /**
@@ -308,6 +316,15 @@ export class AddinClient {
   }
 
   /**
+   * Regiesters a callback to be executed when the specified event type occurs.
+   * @param eventType The event type to process.
+   * @param callback The callback to executes when the event occurs.
+   */
+  public addEventHandler(eventType: string, callback: (context: any) => void) {
+    this.registeredAddinEvents[eventType] = callback;
+  }
+
+  /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
    */
@@ -447,6 +464,9 @@ export class AddinClient {
               this.args.callbacks.settingsClick();
             }
             break;
+          case 'host-event':
+            this.processHostEvent(data.message);
+            break;
 
         }
       } else {
@@ -519,6 +539,27 @@ export class AddinClient {
     } else {
       this.warnInvalidOrigin();
     }
+  }
+
+  /**
+   * Processes an add-in event that occurs from the host and responds
+   * back to the host with an 'event-received' message.
+   * @param message The message to process by looking up executing the registered callback
+   * that matches the event type.
+   */
+  private processHostEvent(message: AddinHostMessage) {
+    const eventArgs: AddinClientEventArgs = message.context;
+    const callback = this.registeredAddinEvents[eventArgs.type];
+    if (callback) {
+      callback(eventArgs.context);
+    }
+
+    this.postMessageToHostPage({
+      message: {
+        eventRequestId: message.eventRequestId
+      },
+      messageType: 'event-received'
+    });
   }
 
   /**

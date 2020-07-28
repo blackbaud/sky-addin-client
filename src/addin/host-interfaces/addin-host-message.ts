@@ -30,6 +30,11 @@ export interface AddinHostMessage {
   modalRequestId?: number;
 
   /**
+   * Identifier to correlate events from the add-in client to the host.
+   */
+  eventRequestId?: number;
+
+  /**
    * Generic field for passing information about the request, such as the explanation for a
    * auth-token-fail message or action message for closing a dialog.
    */

@@ -1,3 +1,6 @@
+# 1.0.20 (2020-07-28)
+- Add event handler for processing events sent from the add-in host.
+
 # 1.0.19 (2020-07-07)
 - Updated `allowedOrigins` to support Luminate Online
 

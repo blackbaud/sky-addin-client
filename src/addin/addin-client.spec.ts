@@ -1090,6 +1090,86 @@ describe('AddinClient ', () => {
 
   });
 
+  describe('event handler', () => {
+    let client: AddinClient;
+    let spyPostMessage: jasmine.Spy;
+
+    beforeEach(() => {
+      client = new AddinClient({
+        callbacks: {
+          init: () => { return; }
+        }
+      });
+
+      spyPostMessage = spyOn(window.parent, 'postMessage');
+      spyPostMessage.and.stub();
+
+      initializeHost();
+
+      spyPostMessage.calls.reset();
+    });
+
+    afterEach(() => {
+      client.destroy();
+    });
+
+    it('should add a callback function for the provided event type.',
+      () => {
+        const callback = () => {
+          return;
+        };
+
+        client.addEventHandler('form-data-update', callback);
+
+        const addinEvents = (client as any).registeredAddinEvents;
+        expect(Object.keys(addinEvents).length).toBe(1);
+
+        expect(addinEvents['form-data-update']).toBe(callback);
+      });
+
+      it('should execute callback function for the provided event type.',
+      () => {
+        let callbackCalled = false;
+        let callbackContext = {};
+        const callback = (context: any) => {
+          callbackCalled = true;
+          callbackContext = context;
+        };
+
+        client.addEventHandler('form-data-update', callback);
+
+        const msg: AddinHostMessageEventData = {
+          message: {
+            context: {
+              context: {
+                constituent_id: '280',
+                gift_type: 'donation'
+              },
+              type: 'form-data-update'
+            },
+            eventRequestId: 1
+          },
+          messageType: 'host-event',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(msg);
+
+        expect(callbackCalled).toBe(true);
+        expect(callbackContext).toBe(msg.message.context.context);
+
+        expect(window.parent.postMessage).toHaveBeenCalledWith({
+          message: {
+            eventRequestId: 1
+          },
+          messageType: 'event-received',
+          source: 'bb-addin-client',
+          addinId: 'test_id'
+        }, jasmine.any(String));
+      });
+
+  });
+
   describe('postMessageToHostPage', () => {
 
     it('should warn if origin is invalid.',
