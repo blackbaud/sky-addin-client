@@ -29,6 +29,9 @@ export interface AddinHostMessage {
    */
   modalRequestId?: number;
 
+  /**
+   * Identifier to correlate events from the add-in client to the host.
+   */
   eventRequestId?: number;
 
   /**
