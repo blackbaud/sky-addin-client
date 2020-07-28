@@ -1,5 +1,8 @@
-# 1.0.19 (2020-07-28)
+# 1.0.20 (2020-07-28)
 - Add event handler for processing events sent from the add-in host.
+
+# 1.0.19 (2020-07-07)
+- Updated `allowedOrigins` to support Luminate Online
 
 # 1.0.18 (2020-06-04)
 - Fixed a bug where localhost required a port in the allowed origins list. [#40](https://github.com/blackbaud/sky-addin-client/pull/40) (Thanks [@MatthewMazaika](https://github.com/MatthewMazaika)!)
