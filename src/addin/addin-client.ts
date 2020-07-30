@@ -316,7 +316,7 @@ export class AddinClient {
   }
 
   /**
-   * Regiesters a callback to be executed when the specified event type occurs.
+   * Registers a callback to be executed when the specified event type occurs.
    * @param eventType The event type to process.
    * @param callback The callback to executes when the event occurs.
    */
