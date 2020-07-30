@@ -318,7 +318,7 @@ export class AddinClient {
   /**
    * Registers a callback to be executed when the specified event type occurs.
    * @param eventType The event type to process.
-   * @param callback The callback to executes when the event occurs.
+   * @param callback The callback to execute when the event occurs.
    */
   public addEventHandler(eventType: string, callback: (context: any) => void) {
     this.registeredAddinEvents[eventType] = callback;
