@@ -21,11 +21,6 @@ export interface AddinTileConfig {
   summaryChecked?: boolean;
 
   /**
-   * Indicates whether to show the Help icon in the tile chrome
-   */
-  showHelp?: boolean;
-
-  /**
    * Indicates whether to show the Settings icon in the tile chrome
    */
   showSettings?: boolean;

@@ -2,7 +2,6 @@ import { AddinClient } from './addin-client';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
 import { AddinClientInitArgs } from './client-interfaces/addin-client-init-args';
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
-import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
 import { AddinClientShowConfirmArgs } from './client-interfaces/addin-client-show-confirm-args';
 import { AddinClientShowErrorArgs } from './client-interfaces/addin-client-show-error-args';
@@ -285,57 +284,6 @@ describe('AddinClient ', () => {
 
     });
 
-
-    describe('help-click', () => {
-
-      it('should call the "helpClick" callback.',
-        () => {
-          let helpClickCalled = false;
-
-          const client = new AddinClient({
-            callbacks: {
-              helpClick: () => { helpClickCalled = true; },
-              init: () => { return; }
-            }
-          });
-
-          initializeHost();
-
-          const msg: AddinHostMessageEventData = {
-            message: {},
-            messageType: 'help-click',
-            source: 'bb-addin-host'
-          };
-
-          postMessageFromHost(msg);
-          client.destroy();
-
-          expect(helpClickCalled).toBe(true);
-        });
-
-      it('should tolerate the "helpClick" callback being undefined.',
-        () => {
-          const client = new AddinClient({
-            callbacks: {
-              init: () => { return; }
-            }
-          });
-
-          initializeHost();
-
-          const msg: AddinHostMessageEventData = {
-            message: {},
-            messageType: 'help-click',
-            source: 'bb-addin-host'
-          };
-
-          postMessageFromHost(msg);
-          client.destroy();
-
-          // No assertion.  Just don't fail.
-        });
-
-    });
 
     describe('settings-click', () => {
 
@@ -650,41 +598,6 @@ describe('AddinClient ', () => {
 
         expect(postedMessage.message.url).toBe(args.url);
         expect(postedMessage.messageType).toBe('navigate');
-        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
-      });
-
-  });
-
-  describe('open-help', () => {
-
-    it('should raise "open-help" event with proper help key.',
-      () => {
-        let postedMessage: any;
-        let postedOrigin: string;
-
-        const client = new AddinClient({
-          callbacks: {
-            init: () => { return; }
-          }
-        });
-
-        initializeHost();
-
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
-          postedMessage = message;
-          postedOrigin = targetOrigin;
-        });
-
-        const args: AddinClientOpenHelpArgs = {
-          helpKey: 'test-help-key.html'
-        };
-
-        client.openHelp(args);
-
-        client.destroy();
-
-        expect(postedMessage.message.helpKey).toBe(args.helpKey);
-        expect(postedMessage.messageType).toBe('open-help');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
       });
 

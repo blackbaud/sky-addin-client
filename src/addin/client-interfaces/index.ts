@@ -7,7 +7,6 @@ export * from './addin-client-event-args';
 export * from './addin-client-flyout-permalink';
 export * from './addin-client-init-args';
 export * from './addin-client-navigate-args';
-export * from './addin-client-open-help-args';
 export * from './addin-client-ready-args';
 export * from './addin-client-ready-button-config';
 export * from './addin-client-show-confirm-args';

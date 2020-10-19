@@ -1,3 +1,6 @@
+# 2.0.0 (2020-10-30)
+- Removed help support.
+
 # 1.0.20 (2020-07-28)
 - Add event handler for processing events sent from the add-in host.
 

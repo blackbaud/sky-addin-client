@@ -1,7 +1,6 @@
 import { AddinClientArgs } from './client-interfaces/addin-client-args';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
-import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
 import { AddinClientShowConfirmArgs } from './client-interfaces/addin-client-show-confirm-args';
 import { AddinClientShowErrorArgs } from './client-interfaces/addin-client-show-error-args';
@@ -203,19 +202,6 @@ export class AddinClient {
     this.postMessageToHostPage({
       message: args,
       messageType: 'close-modal'
-    });
-  }
-
-  /**
-   * Informs the host to open the help tab with the specified help key.
-   * @param args Arguments for launching the help tab.
-   */
-  public openHelp(args: AddinClientOpenHelpArgs) {
-    this.postMessageToHostPage({
-      message: {
-        helpKey: args.helpKey
-      },
-      messageType: 'open-help'
     });
   }
 
@@ -452,11 +438,6 @@ export class AddinClient {
           case 'flyout-previous-click':
             if (this.args.callbacks.flyoutPreviousClick) {
               this.args.callbacks.flyoutPreviousClick();
-            }
-            break;
-          case 'help-click':
-            if (this.args.callbacks.helpClick) {
-              this.args.callbacks.helpClick();
             }
             break;
           case 'settings-click':
