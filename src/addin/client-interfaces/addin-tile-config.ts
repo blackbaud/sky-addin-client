@@ -22,6 +22,7 @@ export interface AddinTileConfig {
 
   /**
    * Indicates whether to show the Help icon in the tile chrome
+   * @deprecated See _Deprecated help support_ in README
    */
   showHelp?: boolean;
 

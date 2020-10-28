@@ -32,6 +32,7 @@ export interface AddinClientCallbacks {
 
   /**
    * Callback raised for tile add-ins indicating that the help button was clicked.
+   * @deprecated See _Deprecated help support_ in README
    */
   helpClick?: () => void;
 
