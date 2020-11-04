@@ -1,4 +1,4 @@
-import { AddinClient } from './addin-client';
+import { AddinClient, AddinEventCallback } from './addin-client';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
 import { AddinClientInitArgs } from './client-interfaces/addin-client-init-args';
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
@@ -242,15 +242,15 @@ describe('AddinClient ', () => {
 
           const client = new AddinClient({
             callbacks: {
-              updateContext: (contextId) => { contextUpdated = true; },
-              init: () => { return; }
+              init: () => { return; },
+              updateContext: (contextId) => { contextUpdated = true; }
             }
           });
 
           initializeHost();
 
           const msg: AddinHostMessageEventData = {
-            message: {context: {id:'123'}},
+            message: {context: {id: '123'}},
             messageType: 'update-context',
             source: 'bb-addin-host'
           };
@@ -284,7 +284,6 @@ describe('AddinClient ', () => {
         });
 
     });
-
 
     describe('help-click', () => {
 
@@ -865,6 +864,52 @@ describe('AddinClient ', () => {
         }, 100);
       });
 
+    it('should raise "show-flyout" event with with default args.',
+      (done) => {
+        let postedMessage: any;
+        let postedOrigin: string;
+        let initCalled: boolean = false;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: () => { initCalled = true; }
+          }
+        });
+
+        initializeHost();
+
+        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin;
+        });
+
+        const args: AddinClientShowFlyoutArgs = {
+          url: 'some url'
+        };
+
+        client.showFlyout(args);
+
+        client.destroy();
+
+        expect(initCalled).toBe(true);
+        expect(postedMessage.message.context).toBe(args.context);
+        expect(postedMessage.message.defaultWidth).toBe(args.defaultWidth);
+        expect(postedMessage.message.iteratorNextDisabled).toBe(args.iteratorNextDisabled);
+        expect(postedMessage.message.iteratorPreviousDisabled).toBe(args.iteratorPreviousDisabled);
+        expect(postedMessage.message.maxWidth).toBe(args.maxWidth);
+        expect(postedMessage.message.minWidth).toBe(args.minWidth);
+        expect(postedMessage.message.permalink).toBe(args.permalink);
+        expect(postedMessage.message.showIterator).toBe(args.showIterator);
+        expect(postedMessage.message.url).toBe(args.url);
+        expect(postedMessage.messageType).toBe('show-flyout');
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+
+        // Delay the vaildation until after the post message is done.
+        setTimeout(() => {
+          done();
+        }, 100);
+      });
+
   });
 
   describe('close-flyout', () => {
@@ -1115,7 +1160,7 @@ describe('AddinClient ', () => {
 
     it('should add a callback function for the provided event type.',
       () => {
-        const callback = () => {
+        const callback: AddinEventCallback = (context: any) => {
           return;
         };
 
@@ -1127,11 +1172,11 @@ describe('AddinClient ', () => {
         expect(addinEvents['form-data-update']).toBe(callback);
       });
 
-      it('should execute callback function for the provided event type.',
+    it('should execute callback function for the provided event type.',
       () => {
         let callbackCalled = false;
         let callbackContext = {};
-        const callback = (context: any) => {
+        const callback: AddinEventCallback = (context: any) => {
           callbackCalled = true;
           callbackContext = context;
         };
@@ -1159,12 +1204,84 @@ describe('AddinClient ', () => {
         expect(callbackContext).toBe(msg.message.context.context);
 
         expect(window.parent.postMessage).toHaveBeenCalledWith({
+          addinId: 'test_id',
           message: {
             eventRequestId: 1
           },
           messageType: 'event-received',
-          source: 'bb-addin-client',
-          addinId: 'test_id'
+          source: 'bb-addin-client'
+        }, jasmine.any(String));
+      });
+
+    it('should respond to event if callback not found.',
+      () => {
+        client.addEventHandler('form-data-update', undefined);
+
+        const msg: AddinHostMessageEventData = {
+          message: {
+            context: {
+              context: {
+                constituent_id: '280',
+                gift_type: 'donation'
+              },
+              type: 'form-data-update'
+            },
+            eventRequestId: 1
+          },
+          messageType: 'host-event',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(msg);
+
+        expect(window.parent.postMessage).toHaveBeenCalledWith({
+          addinId: 'test_id',
+          message: {
+            eventRequestId: 1
+          },
+          messageType: 'event-received',
+          source: 'bb-addin-client'
+        }, jasmine.any(String));
+      });
+
+    it('should wait for blocking event type to respond.',
+      () => {
+        let callbackCalled = false;
+        let callbackContext = {};
+
+        client.addEventHandler('form-save', (context, done) => {
+          callbackCalled = true;
+          callbackContext = context;
+          done();
+        });
+
+        const msg: AddinHostMessageEventData = {
+          message: {
+            context: {
+              context: {
+                constituent_id: '280',
+                gift_type: 'donation'
+              },
+              type: 'form-save'
+            },
+            eventRequestId: 1
+          },
+          messageType: 'host-event',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(msg);
+
+        expect(callbackCalled).toBe(true);
+        expect(callbackContext).toBe(msg.message.context.context);
+
+        expect(window.parent.postMessage).toHaveBeenCalledWith({
+          addinId: 'test_id',
+          message: {
+            eventRequestId: 1
+          },
+          messageType: 'event-received',
+          source: 'bb-addin-client'
         }, jasmine.any(String));
       });
 
