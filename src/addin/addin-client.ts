@@ -577,8 +577,9 @@ export class AddinClient {
   }
 
   /**
-   * Checks whether an event type.
-   * @param event
+   * Checks whether an event type is blocking and requires a response from the client
+   * before responding to the host.
+   * @param type The event type.
    */
   private isBlockingEventType(type: string): boolean {
     switch (type) {
