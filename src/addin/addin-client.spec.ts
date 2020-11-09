@@ -1173,7 +1173,7 @@ describe('AddinClient ', () => {
       });
 
     it('should execute callback function for the provided event type.',
-      () => {
+      (done) => {
         let callbackCalled = false;
         let callbackContext = {};
         const callback: AddinEventCallback = (context: any) => {
@@ -1203,18 +1203,22 @@ describe('AddinClient ', () => {
         expect(callbackCalled).toBe(true);
         expect(callbackContext).toBe(msg.message.context.context);
 
-        expect(window.parent.postMessage).toHaveBeenCalledWith({
-          addinId: 'test_id',
-          message: {
-            eventRequestId: 1
-          },
-          messageType: 'event-received',
-          source: 'bb-addin-client'
-        }, jasmine.any(String));
+        setTimeout(() => {
+          expect(window.parent.postMessage).toHaveBeenCalledWith({
+            addinId: 'test_id',
+            message: {
+              eventRequestId: 1
+            },
+            messageType: 'event-received',
+            source: 'bb-addin-client'
+          }, jasmine.any(String));
+
+          done();
+        }, 1);
       });
 
     it('should respond to event if callback not found.',
-      () => {
+      (done) => {
         client.addEventHandler('form-data-update', undefined);
 
         const msg: AddinHostMessageEventData = {
@@ -1234,25 +1238,29 @@ describe('AddinClient ', () => {
 
         postMessageFromHost(msg);
 
-        expect(window.parent.postMessage).toHaveBeenCalledWith({
-          addinId: 'test_id',
-          message: {
-            eventRequestId: 1
-          },
-          messageType: 'event-received',
-          source: 'bb-addin-client'
-        }, jasmine.any(String));
+        setTimeout(() => {
+          expect(window.parent.postMessage).toHaveBeenCalledWith({
+            addinId: 'test_id',
+            message: {
+              eventRequestId: 1
+            },
+            messageType: 'event-received',
+            source: 'bb-addin-client'
+          }, jasmine.any(String));
+
+          done();
+        }, 1);
       });
 
     it('should wait for blocking event type to respond.',
-      () => {
+      (done) => {
         let callbackCalled = false;
         let callbackContext = {};
 
-        client.addEventHandler('form-save', (context, done) => {
+        client.addEventHandler('form-save', (context, saveDone) => {
           callbackCalled = true;
           callbackContext = context;
-          done();
+          saveDone();
         });
 
         const msg: AddinHostMessageEventData = {
@@ -1275,16 +1283,19 @@ describe('AddinClient ', () => {
         expect(callbackCalled).toBe(true);
         expect(callbackContext).toBe(msg.message.context.context);
 
-        expect(window.parent.postMessage).toHaveBeenCalledWith({
-          addinId: 'test_id',
-          message: {
-            eventRequestId: 1
-          },
-          messageType: 'event-received',
-          source: 'bb-addin-client'
-        }, jasmine.any(String));
-      });
+        setTimeout(() => {
+          expect(window.parent.postMessage).toHaveBeenCalledWith({
+            addinId: 'test_id',
+            message: {
+              eventRequestId: 1
+            },
+            messageType: 'event-received',
+            source: 'bb-addin-client'
+          }, jasmine.any(String));
 
+          done();
+        }, 1);
+      });
   });
 
   describe('postMessageToHostPage', () => {

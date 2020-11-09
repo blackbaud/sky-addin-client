@@ -562,18 +562,25 @@ export class AddinClient {
   private processHostEvent(message: AddinHostMessage) {
     const eventArgs: AddinClientEventArgs = message.context;
     const callback: AddinEventCallback = this.registeredAddinEvents[eventArgs.type];
+    let promise: Promise<void>;
     if (callback) {
       if (this.isBlockingEventType(eventArgs.type)) {
-        callback(eventArgs.context, () => {
-          this.postEventReceivedMessage(message.eventRequestId);
+        promise = new Promise((resolve) => {
+          callback(eventArgs.context, () => {
+            resolve();
+          });
         });
       } else {
-        callback(eventArgs.context);
-        this.postEventReceivedMessage(message.eventRequestId);
+        promise = new Promise((resolve) => {
+          callback(eventArgs.context);
+          resolve();
+        });
       }
     } else {
-      this.postEventReceivedMessage(message.eventRequestId);
+      promise = Promise.resolve();
     }
+
+    promise.then(() => this.postEventReceivedMessage(message.eventRequestId));
   }
 
   /**
