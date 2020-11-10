@@ -1,5 +1,6 @@
 import { AddinClientArgs } from './client-interfaces/addin-client-args';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
+import { AddinClientEventArgs } from './client-interfaces/addin-client-event-args';
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
 import { AddinClientReadyArgs } from './client-interfaces/addin-client-ready-args';
@@ -12,7 +13,6 @@ import { AddinClientShowModalResult } from './client-interfaces/addin-client-sho
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
-import { AddinClientEventArgs } from './client-interfaces/addin-client-event-args';
 
 /**
  * Collection of regexs for our whitelist of host origins.
@@ -29,6 +29,18 @@ const allowedOrigins = [
   /^https\:\/\/[\w\-\.]+\.conviocloud\.com$/,
   /^https\:\/\/[\w\-\.]+\.blackbaudcloud\.com$/
 ];
+
+/**
+ * Callback function to execute when an add-in event occurs.
+ * @param context Abitrary context object passed to the event callback.
+ * @param done Optional callback function to be executed when the client is done
+ * processing the event.
+ *
+ * The following event types require the 'done' callback to be provided:
+ * - 'form-save'
+ * - 'form-cancel'
+ */
+export type AddinEventCallback = (context: any, done?: () => void) => void;
 
 /**
  * Client for interacting with the parent page hosting the add-in.
@@ -90,7 +102,7 @@ export class AddinClient {
    * Key - the event type.
    * Value - The callback function to be executed when the event type occurs.
    */
-  private registeredAddinEvents: {[key: string]: (context: any) => void} = {};
+  private registeredAddinEvents: {[key: string]: AddinEventCallback} = {};
 
   /* istanbul ignore next */
   /**
@@ -316,11 +328,11 @@ export class AddinClient {
   }
 
   /**
-   * Regiesters a callback to be executed when the specified event type occurs.
+   * Registers a callback to be executed when the specified event type occurs.
    * @param eventType The event type to process.
-   * @param callback The callback to executes when the event occurs.
+   * @param callback The callback to execute when the event occurs.
    */
-  public addEventHandler(eventType: string, callback: (context: any) => void) {
+  public addEventHandler(eventType: string, callback: AddinEventCallback) {
     this.registeredAddinEvents[eventType] = callback;
   }
 
@@ -549,14 +561,48 @@ export class AddinClient {
    */
   private processHostEvent(message: AddinHostMessage) {
     const eventArgs: AddinClientEventArgs = message.context;
-    const callback = this.registeredAddinEvents[eventArgs.type];
+    const callback: AddinEventCallback = this.registeredAddinEvents[eventArgs.type];
+    let promise: Promise<void>;
     if (callback) {
-      callback(eventArgs.context);
+      if (this.isBlockingEventType(eventArgs.type)) {
+        promise = new Promise((resolve) => {
+          callback(eventArgs.context, () => {
+            resolve();
+          });
+        });
+      } else {
+        promise = new Promise((resolve) => {
+          callback(eventArgs.context);
+          resolve();
+        });
+      }
+    } else {
+      promise = Promise.resolve();
     }
 
+    promise.then(() => this.postEventReceivedMessage(message.eventRequestId));
+  }
+
+  /**
+   * Checks whether an event type is blocking and requires a response from the client
+   * before responding to the host.
+   * @param type The event type.
+   */
+  private isBlockingEventType(type: string): boolean {
+    switch (type) {
+      case 'form-save':
+      case 'form-cancel':
+        return true;
+      default: break;
+    }
+
+    return false;
+  }
+
+  private postEventReceivedMessage(eventRequestId: number) {
     this.postMessageToHostPage({
       message: {
-        eventRequestId: message.eventRequestId
+        eventRequestId
       },
       messageType: 'event-received'
     });
