@@ -1,3 +1,6 @@
+# 1.1.0 (2020-11-19)
+- Deprecate help widget related functionality.
+
 # 1.0.21 (2020-11-04)
 - Add support for event handler to process blocking events from the add-in host.
 

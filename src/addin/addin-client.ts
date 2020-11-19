@@ -466,6 +466,7 @@ export class AddinClient {
               this.args.callbacks.flyoutPreviousClick();
             }
             break;
+          // TODO remove support for this message type when help support is removed in next major release
           case 'help-click':
             if (this.args.callbacks.helpClick) {
               this.args.callbacks.helpClick();
