@@ -1,4 +1,4 @@
-# 1.1.0 (2020-10-30)
+# 1.1.0 (2020-11-19)
 - Deprecate help widget related functionality.
 
 # 1.0.21 (2020-11-04)
