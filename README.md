@@ -155,6 +155,59 @@ var client = new AddinClient({
 });
 ```
 
+#### Entry form add-ins
+For entry form add-ins, the URL for the add-in will be rendered in a visible iframe on the entry form, where you can render any custom content.  The iframe will initially be hidden until an initialize protocol is completed between the host and the add-in.
+
+The host page will handle rendering the container around the add-in iframe.  When calling the `ready` callback, the `title` field will indicate the title for the vertical tab in the form.  Initially, the vertical tab will be hidden, and will only show on the form if `showUI` is set to `true` in the callback.  You can set it to `false` to indicate that the tab and add-in content should not be shown, based on the user's privileges or whether a user interface is appropriate for your use case.
+
+Entry form add-ins support specific form events that may occur when user interaction causes form data to change, or when a form is saved or canceled.  To handle form events, call the `addEventHandler` method on the `AddinClient` class, passing the event type and callback function to be invoked when the event occurs:
+
+```js
+var client = new AddinClient({
+  callbacks: {
+    init: (args) => {
+      args.ready({
+        showUI: true,
+        title: 'Custom entry form tab'
+      });
+    }
+  }
+});
+
+// To handle add-in events, call the addEventHandler method
+client.addEventHandler({
+  eventType: 'form-data-update',
+  callback: function (context) {
+    // get updated data from context object
+  }
+});
+```
+
+Entry forms may also support the `form-save` and `form-cancel` event types.  These event types allow the add-in client to perform an asynchronous task (e.g. call a backend service) while the form is closing.  The callback's `done()` function MUST be called to allow the form to close.
+
+```js
+var client = new AddinClient({
+  callbacks: {
+    init: (args) => {
+      args.ready({
+        showUI: true,
+        title: 'Custom entry form tab'
+      });
+    }
+  }
+});
+
+// To handle add-in events, call the addEventHandler method
+client.addEventHandler({
+  eventType: 'form-save',
+  callback: function (context, done) {
+    // handle the save event, asynchronously
+
+    done(); // When done, call the done function (tells the entry form it's OK to close)
+  }
+});
+```
+
 #### Showing a modal
 Add-ins are capable of launching a "modal" user experience to show more details or gather additional input from the user.  The modal will be rendered in a separate full-screen iframe to maximize the available real estate (meaning, it will not be scoped to the bounds of the add-in's iframe).
 

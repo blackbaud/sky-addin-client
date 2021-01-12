@@ -120,6 +120,10 @@ export class AddinClient {
     // Listen to messages from the host page.
     window.addEventListener('message', this.windowMessageHandler);
 
+    window.parent.addEventListener('message', (event: MessageEvent) => {
+      console.log('got parent message event: ', event.data);
+    });
+
     // Inform the host page that the add-in is loaded and listening for messages.
     this.raiseAddinReadyMessage();
   }
@@ -383,6 +387,7 @@ export class AddinClient {
       case 'auth-token':
         const authToken = data.message.authToken;
         authTokenRequest.resolve(authToken);
+        console.log('Got auth token: ', data.message.authToken);
         break;
       case 'auth-token-fail':
         authTokenRequest.reject(data.message.reason);
@@ -485,6 +490,8 @@ export class AddinClient {
       } else {
         this.warnInvalidOrigin();
       }
+    } else if (data && data.source === 'bb-addin-client') {
+      console.log('Got add-in client message: ', data);
     }
   }
 
