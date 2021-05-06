@@ -40,4 +40,9 @@ export interface AddinHostMessage {
    */
   reason?: string;
 
+  /**
+   * Event types that are supported by the host page.
+   */
+  supportedEventTypes?: string[];
+
 }

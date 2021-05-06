@@ -104,6 +104,11 @@ export class AddinClient {
    */
   private registeredAddinEvents: {[key: string]: AddinEventCallback} = {};
 
+  private sentEvents: {[key: number]: () => void} = {};
+  private pendingSentEvents: {[key: string]: any} = {};
+  private eventRequestId: number = 0;
+  private supportedEventTypes: string[] = [];
+
   /* istanbul ignore next */
   /**
    * @returns {string}  Returns the current query string path for the window, prefixed with ?.
@@ -336,6 +341,42 @@ export class AddinClient {
     this.registeredAddinEvents[eventType] = callback;
   }
 
+  public sendEvent(args: AddinClientEventArgs): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const eventType = args.type;
+
+      if (!this.supportedEventTypes.includes(eventType)) {
+        reject('Event type not supported');
+      }
+
+      const pendingEvent = this.pendingSentEvents[eventType];
+      if (pendingEvent) {
+        // cancel and reject pending event
+        clearTimeout(pendingEvent.timeoutId);
+        pendingEvent.reject('Event cancelled');
+      }
+
+      const timeoutId = setTimeout(() => {
+        delete this.pendingSentEvents[eventType];
+
+        this.postMessageToHostPage({
+          message: {
+            event: args,
+            eventRequestId: this.eventRequestId
+          },
+          messageType: 'client-event'
+        });
+
+        this.sentEvents[this.eventRequestId] = resolve;
+        this.eventRequestId++;
+      }, 200);
+      this.pendingSentEvents[eventType] = {
+        timeoutId,
+        reject
+      };
+    });
+  }
+
   /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
@@ -409,10 +450,14 @@ export class AddinClient {
 
         this.trackHeightChangesOfAddinContent();
 
+        // set the supported event types
+        this.supportedEventTypes = data.message.supportedEventTypes;
+
         // Pass key data to the add-in for it to initiailze.
         this.args.callbacks.init({
           context: data.message.context,
           envId: data.message.envId,
+          supportedEventTypes : data.message.supportedEventTypes,
           ready: (args: AddinClientReadyArgs) => {
             // Do an immediate height check since the add-in may render something
             // due to the context provided.  No need to wait a full second to reflect.
@@ -479,6 +524,9 @@ export class AddinClient {
             break;
           case 'host-event':
             this.processHostEvent(data.message);
+            break;
+          case 'event-received':
+            this.resolveClientEvent(data.message);
             break;
 
         }
@@ -607,6 +655,15 @@ export class AddinClient {
       },
       messageType: 'event-received'
     });
+  }
+
+  private resolveClientEvent(message: any) {
+    const requestId = message.eventRequestId;
+    const promiseResolve = this.sentEvents[requestId];
+    if (promiseResolve) {
+      promiseResolve();
+      delete this.sentEvents[requestId];
+    }
   }
 
   /**
