@@ -1298,6 +1298,231 @@ describe('AddinClient ', () => {
       });
   });
 
+  describe('send event', () => {
+    let client: AddinClient;
+
+    beforeEach(() => {
+      client = new AddinClient({
+        callbacks: {
+          init: () => { return; }
+        }
+      });
+    });
+
+    afterEach(() => {
+      client.destroy();
+    });
+
+    it('should initialize add-in with supported event types.',
+    () => {
+      const msg: AddinHostMessageEventData = {
+        message: {
+          context: 'my_context',
+          envId: 'my_envid',
+          supportedEventTypes: ['update-settings']
+        },
+        messageType: 'host-ready',
+        source: 'bb-addin-host'
+      };
+
+      postMessageFromHost(msg);
+
+      expect((client as any).supportedEventTypes).toEqual(['update-settings']);
+    });
+
+    it('should raise "client-event" event with proper message.',
+    (done) => {
+      let postedMessage: any;
+      let postedOrigin: string;
+
+      const msg: AddinHostMessageEventData = {
+        message: {
+          context: 'my_context',
+          envId: 'my_envid',
+          supportedEventTypes: ['update-settings']
+        },
+        messageType: 'host-ready',
+        source: 'bb-addin-host'
+      };
+
+      postMessageFromHost(msg);
+
+      spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        postedMessage = message;
+        postedOrigin = targetOrigin;
+      });
+
+      const args: any = {
+        event: {
+            context: {
+            constituent_id: 280
+          },
+          type: 'update-settings'
+        },
+        eventRequestId: 0
+      };
+
+      let promiseResolved = false;
+      client.sendEvent({
+        context: {
+          constituent_id: 280
+        },
+        type: 'update-settings'
+      }).then(() => {
+        promiseResolved = true;
+      });
+
+      setTimeout(() => {
+        expect(postedMessage.message).toEqual(args);
+        expect(postedMessage.messageType).toBe('client-event');
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+
+        // host responds with event-received message
+        const msgReceived: AddinHostMessageEventData = {
+          message: {
+            eventRequestId: 0
+          },
+          messageType: 'event-received',
+          source: 'bb-addin-host'
+        };
+
+        postMessageFromHost(msgReceived);
+
+        // Delay the vaildation until after the post message is done.
+        setTimeout(() => {
+          expect(promiseResolved).toBe(true);
+
+          done();
+        }, 100);
+      }, 600);
+    });
+
+    it('throws error when attempint to send an unsupported event type.',
+    (done) => {
+      const msg: AddinHostMessageEventData = {
+        message: {
+          context: 'my_context',
+          envId: 'my_envid',
+          supportedEventTypes: ['update-settings']
+        },
+        messageType: 'host-ready',
+        source: 'bb-addin-host'
+      };
+
+      postMessageFromHost(msg);
+
+      let promiseResolved = false;
+      let error: string;
+      client.sendEvent({
+        context: {
+          constituent_id: 280
+        },
+        type: 'update-settings2'
+      }).then(() => {
+        promiseResolved = true;
+      }).catch((err) => {
+        error = err;
+      });
+
+      setTimeout(() => {
+        expect(promiseResolved).toBeFalse();
+        expect(error).toBe('Event type not supported');
+
+        done();
+      }, 100);
+    });
+
+    it('should cancel pending addin event when new event sent',
+    (done) => {
+      let postedMessage: any;
+      let postedOrigin: string;
+
+      const msg: AddinHostMessageEventData = {
+        message: {
+          context: 'my_context',
+          envId: 'my_envid',
+          supportedEventTypes: ['update-settings']
+        },
+        messageType: 'host-ready',
+        source: 'bb-addin-host'
+      };
+
+      postMessageFromHost(msg);
+
+      spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        postedMessage = message;
+        postedOrigin = targetOrigin;
+      });
+
+      const args: any = {
+        event: {
+            context: {
+            constituent_id: 280
+          },
+          type: 'update-settings'
+        },
+        eventRequestId: 0
+      };
+
+      let promiseResolved = false;
+      let rejectedReason: string;
+      client.sendEvent({
+        context: {
+          constituent_id: 280
+        },
+        type: 'update-settings'
+      }).then(() => {
+          // should not come here
+          promiseResolved = true;
+        },
+        (reason) => {
+          rejectedReason = reason;
+        });
+
+      // immediately send second event
+      client.sendEvent({
+        context: {
+          constituent_id: 280
+        },
+        type: 'update-settings'
+      }).then(() => {
+        promiseResolved = true;
+        rejectedReason = undefined;
+      });
+
+      // Delay the vaildation until after the initial event is rejected.
+      setTimeout(() => {
+        expect(rejectedReason).toBe('Event cancelled');
+        expect(promiseResolved).toBe(false);
+
+        // Delay the vaildation until after the pending add-in event is sent.
+        setTimeout(() => {
+          expect(postedMessage.message).toEqual(args);
+          expect(postedMessage.messageType).toBe('client-event');
+          expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+
+          // host responds with event-received message
+          const msgReceived: AddinHostMessageEventData = {
+            message: {
+              eventRequestId: 0
+            },
+            messageType: 'event-received',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msgReceived);
+
+          // Delay the vaildation until after the post message is done.
+          setTimeout(() => {
+            expect(promiseResolved).toBe(true);
+
+            done();
+          }, 100);
+        }, 600);
+      });
+    });
+  });
+
   describe('postMessageToHostPage', () => {
 
     it('should warn if origin is invalid.',

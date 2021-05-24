@@ -104,9 +104,31 @@ export class AddinClient {
    */
   private registeredAddinEvents: {[key: string]: AddinEventCallback} = {};
 
+  /**
+   * Stores the add-in events that have been sent to the host page.
+   * Key - the event request ID.
+   * Value - The Promise resolve function to be executed when the event is received by the host.
+   */
   private sentEvents: {[key: number]: () => void} = {};
+
+  /**
+   * Stores the pending add-in events that are queued to be sent to the host page after 200
+   * milliseconds have expired.
+   * Key - the event type.
+   * Value - The Promise reject function to be executed if the event fails to be sent to the host page.
+   */
   private pendingSentEvents: {[key: string]: any} = {};
+
+  /**
+   * The event request ID counter.
+   * The ID is incremented and assigned to each event that is sent.
+   */
   private eventRequestId: number = 0;
+
+  /**
+   * An array of event types that are supported by the host page.
+   * The add-in client will throw an error if an event is attempted but not one the supported types.
+   */
   private supportedEventTypes: string[] = [];
 
   /* istanbul ignore next */
@@ -341,6 +363,13 @@ export class AddinClient {
     this.registeredAddinEvents[eventType] = callback;
   }
 
+  /**
+   * Sends an event to be handled by the host page.
+   * @returns {Promise<void>} Returns a Promise which will resolve when the add-in host page receives the message, or
+   * rejects if a subsequent event occurs, for the same event type, within 200 milliseconds.
+   * The Promise also rejects if an event type is not one of the supported types from the host page.
+   * @see AddinClientInitArgs#supportedEventTypes
+   */
   public sendEvent(args: AddinClientEventArgs): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const eventType = args.type;
@@ -371,8 +400,8 @@ export class AddinClient {
         this.eventRequestId++;
       }, 200);
       this.pendingSentEvents[eventType] = {
-        timeoutId,
-        reject
+        reject,
+        timeoutId
       };
     });
   }
@@ -457,7 +486,6 @@ export class AddinClient {
         this.args.callbacks.init({
           context: data.message.context,
           envId: data.message.envId,
-          supportedEventTypes : data.message.supportedEventTypes,
           ready: (args: AddinClientReadyArgs) => {
             // Do an immediate height check since the add-in may render something
             // due to the context provided.  No need to wait a full second to reflect.
@@ -466,7 +494,8 @@ export class AddinClient {
               message: args,
               messageType: 'addin-ready'
             });
-          }
+          },
+          supportedEventTypes : data.message.supportedEventTypes
         });
 
       } else if (this.isFromValidOrigin(event)) {
@@ -648,6 +677,10 @@ export class AddinClient {
     return false;
   }
 
+  /**
+   * Posts a message to the host page to indicate that a certain event has been received.
+   * @param eventRequestId The ID of the event request that was received.
+   */
   private postEventReceivedMessage(eventRequestId: number) {
     this.postMessageToHostPage({
       message: {
@@ -657,6 +690,10 @@ export class AddinClient {
     });
   }
 
+  /**
+   * Attemps to resolve the Promise for a client event that has been received by the host page.
+   * @param message Message data that includes the ID of the event that was received.
+   */
   private resolveClientEvent(message: any) {
     const requestId = message.eventRequestId;
     const promiseResolve = this.sentEvents[requestId];

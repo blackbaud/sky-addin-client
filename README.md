@@ -50,6 +50,7 @@ All add-ins must use this library in order to show in the host application. You 
 Your `init` function will be called with an arguments object that contains:
  - `envId` - The environment ID for the host page
  - `context` - Additional context of the host page, which will vary for different extension points.
+ - `supportedEventTypes` - The supported event types that are handled by the host page.
  - `ready` - A callback to inform the add-in client that the add-in is initialized and ready to be shown.
 
 Using the information provided in the `init` arguments, the add-in should determine if and how it should be rendered.  Then it should call the `ready` callback, informing the host page.
@@ -374,6 +375,43 @@ An add-in is able to end the wait indicator by calling the `hideWait` function o
 var client = new AddinClient({...});
 client.hideWait();
 ```
+
+#### Sending custom events to the host page
+An add-in can send a custom event to the host page, as long as the host supports the event type.
+Before sending an event to the host page, you must register for `init` and check the `supportedEventTypes`
+property to determine what event types the host page will handle.
+
+```js
+var supportedEventTypes;
+
+var client = new AddinClient({
+  callbacks: {
+    init: (args) => {
+      supportedEventTypes = args.supportedEventTypes;
+
+      args.ready({
+        showUI: true
+      });
+    }
+  }
+});
+
+// Before sending event, check to make sure the event is supported by the host page
+if (supportedEventTypes.includes('my-event-type')) {
+  // To send add-in events to the host, call the sendEvent method
+  client.sendEvent({
+    type: 'my-event-type',
+    context: { /* arbitrary context object to pass to host page */ }
+  }).then(() => {
+    // host page received the event
+  }).catch((err) => {
+    // an error occurred while attempting to send the event
+  });
+}
+```
+
+To determine the add-in extension points that support custom events,
+please see https://developer.blackbaud.com/skyapi/docs/addins/concepts/extension-points.
 
 ## Authentication
 SKY add-ins support a single-sign-on (SSO) mechanism that can be used to correlate the Blackbaud user with a user in the add-in's native system.
