@@ -402,7 +402,7 @@ if (supportedEventTypes.includes('my-event-type')) {
   // To send add-in events to the host, call the sendEvent method
   client.sendEvent({
     type: 'my-event-type',
-    context: { /* arbitrary context object to pass to host page */ }
+    context: { /* context object to pass to host page */ }
   }).then(() => {
     // host page received the event
   }).catch((err) => {
