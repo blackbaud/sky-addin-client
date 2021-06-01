@@ -365,6 +365,7 @@ export class AddinClient {
 
   /**
    * Sends an event to be handled by the host page.
+   * Supported for Blackbaud internal only
    * @returns {Promise<void>} Returns a Promise which will resolve when the add-in host page receives the message, or
    * rejects if a subsequent event occurs, for the same event type, within 200 milliseconds.
    * The Promise also rejects if an event type is not one of the supported types from the host page.

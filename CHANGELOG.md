@@ -1,4 +1,4 @@
-# 1.1.1 (2021-05-24)
+# 1.1.1 (2021-06-01)
 - Add support for sending custom events to the add-in host page.
 
 # 1.1.0 (2020-11-19)
