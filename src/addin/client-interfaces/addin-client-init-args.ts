@@ -16,6 +16,11 @@ export interface AddinClientInitArgs {
   context?: any;
 
   /**
+   * Event types that are supported by the host page.
+   */
+   supportedEventTypes?: string[];
+
+  /**
    * Call to inform the add-in client that the add-in is initialized and ready to be shown.
    * @param args Arguments describing how the add-in should render.
    */
