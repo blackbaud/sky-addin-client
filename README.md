@@ -377,7 +377,6 @@ client.hideWait();
 ```
 
 #### Sending custom events to the host page
-**Blackbaud Internal Only**
 An add-in can send a custom event to the host page, as long as the host supports the event type.
 Before sending an event to the host page, you must register for `init` and check the `supportedEventTypes`
 property to determine what event types the host page will handle.
