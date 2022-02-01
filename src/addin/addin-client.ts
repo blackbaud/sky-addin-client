@@ -27,7 +27,9 @@ const allowedOrigins = [
   /^https\:\/\/secure[2|3|8]\.convio\.net$/,
   /^https\:\/\/testweb\.convio\.com$/,
   /^https\:\/\/[\w\-\.]+\.conviocloud\.com$/,
-  /^https\:\/\/[\w\-\.]+\.blackbaudcloud\.com$/
+  /^https\:\/\/[\w\-\.]+\.blackbaudcloud\.com$/,
+  /^https\:\/\/[\w\-\.]+\.blackbaudfaith\.com$/,
+  /^https\:\/\/[\w\-\.]+\.blackbaudportal\.com$/
 ];
 
 /**
