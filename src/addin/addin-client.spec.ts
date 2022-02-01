@@ -1611,7 +1611,19 @@ describe('AddinClient ', () => {
       'https://my.test.conviocloud.com',
       'https://test_site.conviocloud.com',
       'https://test-site.conviocloud.com',
-      'https://view-my.test_site.conviocloud.com'
+      'https://view-my.test_site.conviocloud.com',
+      'https://www.blackbaudfaith.com',
+      'https://test.blackbaudfaith.com',
+      'https://my.test.blackbaudfaith.com',
+      'https://test_site.blackbaudfaith.com',
+      'https://test-site.blackbaudfaith.com',
+      'https://view-my.test_site.blackbaudfaith.com',
+      'https://www.blackbaudportal.com',
+      'https://test.blackbaudportal.com',
+      'https://my.test.blackbaudportal.com',
+      'https://test_site.blackbaudportal.com',
+      'https://test-site.blackbaudportal.com',
+      'https://view-my.test_site.blackbaudportal.com'
     ].forEach((url) => {
       it(`should not warn because ${url} is allowed.`,
         () => {
