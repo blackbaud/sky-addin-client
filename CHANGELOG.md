@@ -1,3 +1,6 @@
+# 1.1.1 (2022-06-01)
+- Updated `allowedOrigins` to support blackbaudfaith.com
+
 # 1.1.1 (2021-06-01)
 - Add support for sending custom events to the add-in host page.
 
