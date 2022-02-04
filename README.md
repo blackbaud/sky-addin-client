@@ -1,6 +1,6 @@
 # sky-addin-client
 [![npm](https://img.shields.io/npm/v/@blackbaud/sky-addin-client.svg)](https://www.npmjs.com/package/@blackbaud/sky-addin-client)
-[![status](https://travis-ci.org/blackbaud/sky-addin-client.svg?branch=master)](https://travis-ci.org/blackbaud/sky-addin-client)
+[![coverage](https://codecov.io/github/blackbaud/sky-addin-client/coverage.svg?branch=master)](https://codecov.io/github/blackbaud/sky-addin-client/)
 
 The SKY Add-in Client Library facilitates creating custom add-ins to extend UI experiences within Blackbaud applications.  Developers can register the add-in URL with their SKY API application, and at runtime the add-in will be loaded into an iframe within the application.  This library must be used in the add-in for it to render within the Blackbaud application. The `AddinClient` class will integrate with the host page, passing data and commands between the host and the add-in's iframe.
 
