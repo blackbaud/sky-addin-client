@@ -29,7 +29,13 @@ const allowedOrigins = [
   /^https\:\/\/[\w\-\.]+\.conviocloud\.com$/,
   /^https\:\/\/[\w\-\.]+\.blackbaudcloud\.com$/,
   /^https\:\/\/[\w\-\.]+\.blackbaudfaith\.com$/,
-  /^https\:\/\/[\w\-\.]+\.blackbaudportal\.com$/
+  /^https\:\/\/[\w\-\.]+\.blackbaudportal\.com$/,
+  /^https\:\/\/[\w\-\.]+\.bbk12\.com$/,
+  /^https\:\/\/[\w\-\.]+\.mycampus\-app\.com$/,
+  /^https\:\/\/[\w\-\.]+\.myschoolapp\.com$/,
+  /^https\:\/\/[\w\-\.]+\.myschoolautomation\.com$/,
+  /^https\:\/\/[\w\-\.]+\.myschooldemo\.com$/,
+  /^https\:\/\/[\w\-\.]+\.myschooltraining\.com$/
 ];
 
 /**
