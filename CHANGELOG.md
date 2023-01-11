@@ -1,3 +1,7 @@
+# 1.1.4 (2023-01-11)
+
+- Add `actionButtonConfig` and `tabConfig` to AddinClientReadyArgs.
+
 # 1.1.3 (2022-05-12)
 - Updated `allowedOrigins` to support Education Management
 
