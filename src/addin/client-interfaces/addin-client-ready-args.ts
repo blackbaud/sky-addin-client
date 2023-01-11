@@ -1,6 +1,7 @@
 import { AddinActionButtonConfig } from './addin-action-button-config';
 import { AddinButtonConfig } from './addin-button-config';
 import { AddinModalConfig } from './addin-modal-config';
+import { AddinTabConfig } from './addin-tab-config';
 import { AddinTileConfig } from './addin-tile-config';
 
 /**
@@ -42,5 +43,5 @@ export interface AddinClientReadyArgs {
   /**
    * Provides additional configuration for Tab add-ins
    */
-  tabConfig?: {};
+  tabConfig?: AddinTabConfig;
 }
