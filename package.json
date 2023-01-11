@@ -58,7 +58,7 @@
     "raw-loader": "4.0.0",
     "remap-istanbul": "0.13.0",
     "rimraf": "3.0.2",
-    "source-map-inline-loader": "github:blackbaud-bobbyearl/source-map-inline-loader",
+    "source-map-inline-loader": "1.0.0",
     "ts-loader": "6.2.2",
     "tslint": "5.18.0",
     "tslint-loader": "3.5.4",
