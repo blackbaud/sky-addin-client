@@ -1,5 +1,5 @@
 /**
- * Interface for defining configuration options for Tile add-ins
+ * Interface for defining configuration options for Tab add-ins
  */
 export interface AddinTabConfig {
   /**
