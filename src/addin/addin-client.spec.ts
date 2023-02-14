@@ -37,7 +37,7 @@ function initializeHost() {
   postMessageFromHost(msg);
 }
 
-fdescribe('AddinClient ', () => {
+describe('AddinClient ', () => {
 
   // Set the addinId query string.
   (AddinClient as any).getQueryString = () => {
