@@ -1,4 +1,5 @@
 import { AddinClientReadyArgs } from './addin-client-ready-args';
+import { AddinClientThemeSettings } from './addin-client-theme-settings';
 
 /**
  * Interface for contextual information that will be provided in the init callback.
@@ -19,6 +20,11 @@ export interface AddinClientInitArgs {
    * Event types that are supported by the host page.
    */
    supportedEventTypes?: string[];
+
+  /**
+   * The UX theme of the host page, which will vary for different extension points.
+   */
+   themeSettings?: AddinClientThemeSettings;
 
   /**
    * Call to inform the add-in client that the add-in is initialized and ready to be shown.

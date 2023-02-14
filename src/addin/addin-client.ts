@@ -373,7 +373,6 @@ export class AddinClient {
 
   /**
    * Sends an event to be handled by the host page.
-   * Supported for Blackbaud internal only
    * @returns {Promise<void>} Returns a Promise which will resolve when the add-in host page receives the message, or
    * rejects if a subsequent event occurs, for the same event type, within 200 milliseconds.
    * The Promise also rejects if an event type is not one of the supported types from the host page.
@@ -504,7 +503,8 @@ export class AddinClient {
               messageType: 'addin-ready'
             });
           },
-          supportedEventTypes : data.message.supportedEventTypes
+          supportedEventTypes : data.message.supportedEventTypes,
+          themeSettings: data.message.themeSettings
         });
 
       } else if (this.isFromValidOrigin(event)) {
@@ -558,6 +558,11 @@ export class AddinClient {
           case 'settings-click':
             if (this.args.callbacks.settingsClick) {
               this.args.callbacks.settingsClick();
+            }
+            break;
+          case 'theme-change':
+            if (this.args.callbacks.themeChange) {
+              this.args.callbacks.themeChange(data.message.themeSettings);
             }
             break;
           case 'host-event':
