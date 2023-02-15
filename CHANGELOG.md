@@ -1,5 +1,7 @@
-# 1.1.4 (2023-01-11)
+# 1.1.5 (2023-02-15)
+- Add `themeChange` callback to indicate when the add-in host page UX theme changes.
 
+# 1.1.4 (2023-01-11)
 - Add `actionButtonConfig` and `tabConfig` to AddinClientReadyArgs.
 
 # 1.1.3 (2022-05-12)

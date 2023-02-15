@@ -142,7 +142,12 @@ describe('AddinClient ', () => {
           const msg: AddinHostMessageEventData = {
             message: {
               context: 'my_context',
-              envId: 'my_envid'
+              envId: 'my_envid',
+              supportedEventTypes: ['update-event'],
+              themeSettings: {
+                mode: 'light',
+                theme: 'default'
+              }
             },
             messageType: 'host-ready',
             source: 'bb-addin-host'
@@ -154,6 +159,11 @@ describe('AddinClient ', () => {
 
           expect(initArgs.context).toBe('my_context');
           expect(initArgs.envId).toBe('my_envid');
+          expect(initArgs.supportedEventTypes).toEqual(['update-event']);
+          expect(initArgs.themeSettings).toEqual({
+            mode: 'light',
+            theme: 'default'
+          });
         });
 
     });
@@ -387,11 +397,62 @@ describe('AddinClient ', () => {
 
     });
 
+    describe('theme-change', () => {
+
+      it('should call the "themeChange" callback.',
+        () => {
+          let themeChangeCalled = false;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; },
+              themeChange: () => { themeChangeCalled = true; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'theme-change',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          expect(themeChangeCalled).toBe(true);
+        });
+
+      it('should tolerate the "themeChange" callback being undefined.',
+        () => {
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'themeChange',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          // No assertion.  Just don't fail.
+        });
+
+    });
+
     describe('auth-token', () => {
 
       it('should pass result back through promise from getUserIdentityToken.',
         (done) => {
-          let tokenReceived: string = null;
+          let tokenReceived: string;
 
           const client = new AddinClient({
             callbacks: {
@@ -431,7 +492,7 @@ describe('AddinClient ', () => {
 
       it('should reject the promise from getUserIdentityToken and return the reason.',
         () => {
-          let reasonReceived: string = null;
+          let reasonReceived: string;
 
           const client = new AddinClient({
             callbacks: {

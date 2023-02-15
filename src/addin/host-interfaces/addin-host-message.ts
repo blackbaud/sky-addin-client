@@ -1,3 +1,5 @@
+import { AddinClientThemeSettings } from '../client-interfaces';
+
 /**
  * Interface for the actual message data embedded in an AddinHostMessageEventData.
  * The populated fields will vary by the message type.
@@ -45,4 +47,8 @@ export interface AddinHostMessage {
    */
   supportedEventTypes?: string[];
 
+  /**
+   * The UX theme of the host page, which will vary for different extension points.
+   */
+  themeSettings?: AddinClientThemeSettings;
 }

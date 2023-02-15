@@ -1,4 +1,5 @@
 import { AddinClientInitArgs } from './addin-client-init-args';
+import { AddinClientThemeSettings } from './addin-client-theme-settings';
 
 /**
  * Interface for add-ins to subscribe to callbacks from the AddinClient.
@@ -40,5 +41,10 @@ export interface AddinClientCallbacks {
    * Callback raised for tile add-ins indicating that the settings button was clicked.
    */
   settingsClick?: () => void;
+
+  /**
+   * Callback raised indicating the UX theme was changed in the host.
+   */
+  themeChange?: (settings: AddinClientThemeSettings) => void;
 
 }
