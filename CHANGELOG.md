@@ -1,3 +1,7 @@
+# 1.2.0 (2023-09-27)
+### Behavior change
+- Allow host page to determine default values for flyout widths when not provided.
+
 # 1.1.5 (2023-02-15)
 - Add `themeChange` callback to indicate when the add-in host page UX theme changes.
 

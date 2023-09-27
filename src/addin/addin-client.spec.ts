@@ -248,7 +248,7 @@ describe('AddinClient ', () => {
 
       it('should call the "updateContext" callback.',
         () => {
-          let contextUpdated: boolean = false;
+          let contextUpdated = false;
 
           const client = new AddinClient({
             callbacks: {
@@ -593,9 +593,9 @@ describe('AddinClient ', () => {
           source: 'bb-addin-host'
         };
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         postMessageFromHost(msg);
@@ -624,9 +624,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientCloseModalArgs = {};
@@ -657,9 +657,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         client.getUserIdentityToken();
@@ -695,9 +695,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientNavigateArgs = {
@@ -730,9 +730,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientOpenHelpArgs = {
@@ -765,9 +765,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientShowModalArgs = {};
@@ -807,9 +807,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientShowToastArgs = {
@@ -834,10 +834,10 @@ describe('AddinClient ', () => {
       (done) => {
         let postedMessage: any;
         let postedOrigin: string;
-        let initCalled: boolean = false;
-        let flyoutNextClickCalled: boolean = false;
-        let flyoutPreviousClickCalled: boolean = false;
-        let flyoutClosedCalled: boolean = false;
+        let initCalled = false;
+        let flyoutNextClickCalled = false;
+        let flyoutPreviousClickCalled = false;
+        let flyoutClosedCalled = false;
 
         const client = new AddinClient({
           callbacks: {
@@ -849,9 +849,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientShowFlyoutArgs = {
@@ -929,7 +929,7 @@ describe('AddinClient ', () => {
       (done) => {
         let postedMessage: any;
         let postedOrigin: string;
-        let initCalled: boolean = false;
+        let initCalled = false;
 
         const client = new AddinClient({
           callbacks: {
@@ -939,9 +939,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientShowFlyoutArgs = {
@@ -988,9 +988,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         client.closeFlyout();
@@ -1020,9 +1020,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientShowConfirmArgs = {
@@ -1086,9 +1086,9 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           postedMessage = message;
-          postedOrigin = targetOrigin;
+          postedOrigin = targetOrigin as string;
         });
 
         const args: AddinClientShowErrorArgs = {
@@ -1147,7 +1147,7 @@ describe('AddinClient ', () => {
 
         client.showWait();
 
-        expect(window.parent.postMessage).toHaveBeenCalledWith(jasmine.any(Object), expected);
+        expect(spyPostMessage).toHaveBeenCalledWith(jasmine.any(Object), expected);
       });
 
   });
@@ -1191,7 +1191,7 @@ describe('AddinClient ', () => {
 
         client.hideWait();
 
-        expect(window.parent.postMessage).toHaveBeenCalledWith(jasmine.any(Object), expected);
+        expect(spyPostMessage).toHaveBeenCalledWith(jasmine.any(Object), expected);
       });
 
   });
@@ -1408,9 +1408,9 @@ describe('AddinClient ', () => {
 
       postMessageFromHost(msg);
 
-      spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+      spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
         postedMessage = message;
-        postedOrigin = targetOrigin;
+        postedOrigin = targetOrigin as string;
       });
 
       const args: any = {
@@ -1510,9 +1510,9 @@ describe('AddinClient ', () => {
 
       postMessageFromHost(msg);
 
-      spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+      spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
         postedMessage = message;
-        postedOrigin = targetOrigin;
+        postedOrigin = targetOrigin as string;
       });
 
       const args: any = {
@@ -1786,11 +1786,11 @@ describe('AddinClient ', () => {
 
         initializeHost();
 
-        spyOn(window.parent, 'postMessage').and.callFake((message: any, targetOrigin: string) => {
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
           // Filter out the add-in ready event.
           if (message.messageType === 'height-change') {
             postedMessage = message;
-            postedOrigin = targetOrigin;
+            postedOrigin = targetOrigin as string;
           }
         });
 
