@@ -285,11 +285,10 @@ export class AddinClient {
   public showFlyout(args: AddinClientShowFlyoutArgs): AddinClientShowFlyoutResult {
     return {
       flyoutClosed: new Promise<void>((resolve, reject) => {
-        // assign default values if not specified,
-        // consistent with SKY UX flyout defaults
-        args.defaultWidth = args.defaultWidth || 500;
-        args.maxWidth = args.maxWidth || args.defaultWidth;
-        args.minWidth = args.minWidth || 320;
+        // host page will apply default values when not provided
+        args.defaultWidth = args.defaultWidth;
+        args.maxWidth = args.maxWidth;
+        args.minWidth = args.minWidth;
 
         this.flyoutRequest = {
           reject,

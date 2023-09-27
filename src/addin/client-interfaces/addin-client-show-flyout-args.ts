@@ -11,7 +11,7 @@ export interface AddinClientShowFlyoutArgs {
   url: string;
 
   /**
-   * Specifies the default width of the flyout container. (Default: 500)
+   * Specifies the default width of the flyout container. (Default: half the width of its container)
    */
   defaultWidth?: number;
 
