@@ -131,7 +131,7 @@ export class AddinClient {
    * The event request ID counter.
    * The ID is incremented and assigned to each event that is sent.
    */
-  private eventRequestId: number = 0;
+  private eventRequestId = 0;
 
   /**
    * An array of event types that are supported by the host page.

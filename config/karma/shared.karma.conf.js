@@ -1,43 +1,50 @@
-module.exports = function (config) {
-  'use strict';
+const path = require('path');
 
-  let testWebpackConfig = require('../webpack/webpack.test.config');
-  let remapIstanbul = require('remap-istanbul');
+const testWebpackConfig = require('../webpack/webpack.test.config');
 
+module.exports = (config) => {
   config.set({
     basePath: '',
-    frameworks: ['jasmine'],
-    exclude: [],
-    files: [{
-      pattern: '../utils/spec-bundle.js',
-      watched: false
-    }],
+    files: [
+      {
+        pattern: '../utils/spec-bundle.js',
+        watched: false,
+      },
+    ],
+
+    frameworks: ['jasmine', 'webpack'],
+
     preprocessors: {
-      '../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
+      '../utils/spec-bundle.js': ['webpack'],
     },
-    webpack: testWebpackConfig,
-    coverageReporter: {
-      dir: '../../coverage/',
-      reporters: [
-        { type: 'json' },
-        { type: 'html' }
-      ],
-      _onWriteReport: function (collector) {
-        return remapIstanbul.remap(collector.getFinalCoverage());
-      }
+
+    coverageIstanbulReporter: {
+      dir: path.join(__dirname, '..', '..', 'coverage'),
+      fixWebpackSourcePaths: true,
+      reports: ['html', 'json'],
     },
+
+    reporters: ['mocha', 'coverage-istanbul'],
+
     webpackServer: {
-      noInfo: true
+      noInfo: true,
     },
+
     browserConsoleLogOptions: {
       terminal: true,
-      level: ""
+      level: '',
     },
-    reporters: ['mocha', 'coverage'],
+
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
+    webpack: testWebpackConfig,
     autoWatch: false,
-    singleRun: true
+    singleRun: true,
+    client: {
+      jasmine: {
+        random: false,
+      },
+    },
   });
 };

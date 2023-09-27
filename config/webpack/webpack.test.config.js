@@ -1,46 +1,31 @@
 const path = require('path');
 
 module.exports = {
-  entry: './index.ts',
-
-  devtool: 'inline-source-map',
   mode: 'development',
-
+  devtool: 'inline-source-map',
+  output: {
+    path: path.resolve(__dirname, '..', '..', '.karma_temp'),
+  },
   resolve: {
     extensions: ['.ts', '.js'],
-    modules: [path.resolve(__dirname, '..', '..', 'src'), 'node_modules']
+    modules: [path.resolve(__dirname, '..', '..', 'src'), 'node_modules'],
   },
-
+  watchOptions: {
+    ignored: ['**/dist', '**/.kamra_temp'],
+  },
   module: {
     rules: [
       {
-        enforce: 'pre',
-        test: /\.ts$/,
-        loader: 'tslint-loader',
-        exclude: [path.resolve(__dirname, '..', '..', 'node_modules')],
-        options: {
-          emitErrors: true,
-          failOnHint: true,
-          resourcePath: 'src'
-        }
-      },
-      {
-        test: /\.ts$/,
-        loaders: [
-          'ts-loader'
-        ]
-      },
-      {
-        enforce: 'post',
         test: /\.(js|ts)$/,
-        loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
+        loader: '@jsdevtools/coverage-istanbul-loader',
         include: path.resolve(__dirname, '..', '..', 'src'),
-        exclude: [
-          /\.(e2e|spec)\.ts$/,
-          /node_modules/,
-          /index\.ts/
-        ]
-      }
-    ]
-  }
+        exclude: [/\.(e2e|spec)\.ts$/, /node_modules/, /index\.ts/],
+      },
+      {
+        exclude: /(node_modules)/,
+        test: /\.ts$/,
+        loader: 'ts-loader',
+      },
+    ],
+  },
 };
