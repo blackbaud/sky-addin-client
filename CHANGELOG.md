@@ -1,3 +1,6 @@
+# 1.2.1 (2024-04-01)
+- Package updates
+
 # 1.2.0 (2023-09-27)
 ### Behavior change
 - Allow host page to determine default values for flyout widths when not provided.
