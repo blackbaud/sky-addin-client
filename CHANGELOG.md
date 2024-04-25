@@ -1,3 +1,6 @@
+# 1.2.2 (2024-04-25)
+- Updated `allowedOrigins` to support Good Move and fix EMC portal issues
+
 # 1.2.1 (2024-04-01)
 - Package updates
 
