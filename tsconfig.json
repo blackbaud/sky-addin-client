@@ -10,8 +10,5 @@
     "lib": ["dom", "es6"],
     "outDir": "dist"
   },
-  "exclude": ["node_modules"],
-  "rules": {
-    "@typescript-eslint/no-explicit-any": ["off"]
-  }
+  "exclude": ["node_modules"]
 }
