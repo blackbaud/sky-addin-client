@@ -1,6 +1,6 @@
-import { AddinClientConfig } from './client-interfaces';
 import { AddinClientArgs } from './client-interfaces/addin-client-args';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
+import { AddinClientConfig } from './client-interfaces/addin-client-config';
 import { AddinClientEventArgs } from './client-interfaces/addin-client-event-args';
 import { AddinClientNavigateArgs } from './client-interfaces/addin-client-navigate-args';
 import { AddinClientOpenHelpArgs } from './client-interfaces/addin-client-open-help-args';
@@ -16,8 +16,8 @@ import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
 /**
-   * Collection of regexs for our whitelist of host origins.
-   */
+  * Collection of regexs for our whitelist of host origins.
+  */
 const allowedOrigins = [
   /^https\:\/\/[\w\-\.]+\.blackbaud\.com$/,
   /^https\:\/\/[\w\-\.]+\.blackbaud\-dev\.com$/,
