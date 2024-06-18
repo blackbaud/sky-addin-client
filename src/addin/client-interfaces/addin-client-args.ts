@@ -1,4 +1,5 @@
 import { AddinClientCallbacks } from './addin-client-callbacks';
+import { AddinClientConfig } from './addin-client-config';
 
 /**
  * Interface for constructing an AddinClient.
@@ -10,4 +11,8 @@ export interface AddinClientArgs {
    */
   callbacks: AddinClientCallbacks;
 
+  /**
+   * Optional configuration for an AddinClient.
+   */
+  config?: AddinClientConfig;
 }

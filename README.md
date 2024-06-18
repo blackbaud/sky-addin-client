@@ -69,6 +69,24 @@ var client = new AddinClient({
 });
 ```
 
+You can also allow additional origins where your add-in client may run within a Blackbaud host page. Additional origins are supplied as regular expression patterns. The `AddinClient` already allows several Blackbaud host origins by default. If you find a need to extend the defaults, you may do so by populating the `AddinClientConfig`'s `allowedOrigins` property.
+
+```js
+var client = new AddinClient({
+  callbacks: {
+    init: (args) => {
+      args.ready({
+        showUI: true,
+        title: 'My Custom Tile Title'
+      });
+    }
+  },
+  allowedOrigins: [
+    /^https\:\/\/[\w\-\.]+\.additionalblackbauddomain\.com$/,
+  ]
+});
+```
+
 #### Tile add-ins
 For tile add-ins, the URL for the add-in will be rendered in a visible iframe on the page, where you can render any custom content.  The iframe will initially be hidden until an initialize protocol is completed between the host and the add-in.
 

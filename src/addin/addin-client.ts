@@ -1,3 +1,4 @@
+import { AddinClientConfig } from './client-interfaces';
 import { AddinClientArgs } from './client-interfaces/addin-client-args';
 import { AddinClientCloseModalArgs } from './client-interfaces/addin-client-close-modal-args';
 import { AddinClientEventArgs } from './client-interfaces/addin-client-event-args';
@@ -15,8 +16,8 @@ import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
 /**
- * Collection of regexs for our whitelist of host origins.
- */
+   * Collection of regexs for our whitelist of host origins.
+   */
 const allowedOrigins = [
   /^https\:\/\/[\w\-\.]+\.blackbaud\.com$/,
   /^https\:\/\/[\w\-\.]+\.blackbaud\-dev\.com$/,
@@ -202,6 +203,11 @@ export class AddinClient {
    */
   private supportedEventTypes: string[] = [];
 
+  /**
+   * Collection of regexs for our whitelist of host origins.
+   */
+  private allowedOrigins: RegExp[] = allowedOrigins;
+
   /* istanbul ignore next */
   /**
    * @returns {string}  Returns the current query string path for the window, prefixed with ?.
@@ -211,6 +217,8 @@ export class AddinClient {
   }
 
   constructor(private args: AddinClientArgs) {
+    this.initConfig(args.config);
+
     this.windowMessageHandler = (event) => {
       this.handleMessage(event);
     };
@@ -476,6 +484,20 @@ export class AddinClient {
     });
   }
 
+  private initConfig(config: AddinClientConfig) {
+    if (config?.allowedOrigins?.length > 0) {
+      // append custom allowed origins
+      this.allowedOrigins = this.allowedOrigins.concat(config.allowedOrigins);
+      // remove duplicates
+      this.allowedOrigins = this.allowedOrigins.reduce((acc: RegExp[], curr: RegExp) => {
+          if (!acc.find((a) => a.source === curr.source)) {
+              acc.push(curr);
+          }
+          return acc;
+      }, []);
+    }
+  }
+
   /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
@@ -649,7 +671,7 @@ export class AddinClient {
    * @param hostOrigin
    */
   private setKnownAllowedHostOrigin(hostOrigin: string) {
-    for (const allowedOrigin of allowedOrigins) {
+    for (const allowedOrigin of this.allowedOrigins) {
       if (allowedOrigin.test(hostOrigin)) {
         this.trustedOrigin = hostOrigin;
         return;
