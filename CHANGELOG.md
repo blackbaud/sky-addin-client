@@ -1,3 +1,6 @@
+# 1.3.0 (2024-06-18)
+- Added `AddinClientConfig` interface to allow additional host origins to be supplied by an `AddinClient`.
+
 # 1.2.2 (2024-04-25)
 - Updated `allowedOrigins` to support Good Move and fix EMC portal issues
 

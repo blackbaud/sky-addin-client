@@ -71,6 +71,54 @@ describe('AddinClient ', () => {
 
     });
 
+    it ('should initialize AddinClient with default allowedOrigins collection', () => {
+      const client = new AddinClient({
+        callbacks: {
+          init: () => { return; }
+        }
+      });
+      client.destroy();
+
+      expect((<any>client).allowedOrigins.length).toBe(81);
+    });
+
+    it ('should initialize AddinClient with additional allowedOrigins', () => {
+      const client = new AddinClient({
+        callbacks: {
+          init: () => { return; }
+        },
+        config: {
+          allowedOrigins: [
+            /^https\:\/\/[\w\-\.]+\.additionaldomain1\.com$/,
+            /^https\:\/\/[\w\-\.]+\.additionaldomain2\.com$/,
+            /^https\:\/\/[\w\-\.]+\.additionaldomain3\.com$/
+          ]
+        }
+      });
+      client.destroy();
+
+      expect((<any>client).allowedOrigins.length).toBe(84);
+    });
+
+    it ('additional allowedOrigins - removing duplicates', () => {
+      const client = new AddinClient({
+        callbacks: {
+          init: () => { return; }
+        },
+        config: {
+          allowedOrigins: [
+            /^https\:\/\/[\w\-\.]+\.additionaldomain1\.com$/,
+            /^https\:\/\/[\w\-\.]+\.blackbaud\.com$/,
+            /^https\:\/\/[\w\-\.]+\.blackbaud\-dev\.com$/,
+            /^http\:\/\/[\w\-\.]+\.blackbaud\-dev\.com$/,
+          ]
+        }
+      });
+      client.destroy();
+
+      expect((<any>client).allowedOrigins.length).toBe(82);
+    });
+
   });
 
   describe('getAuthToken', () => {
@@ -253,7 +301,7 @@ describe('AddinClient ', () => {
           const client = new AddinClient({
             callbacks: {
               init: () => { return; },
-              updateContext: (contextId) => { contextUpdated = true; }
+              updateContext: () => { contextUpdated = true; }
             }
           });
 
@@ -1221,7 +1269,7 @@ describe('AddinClient ', () => {
 
     it('should add a callback function for the provided event type.',
       () => {
-        const callback: AddinEventCallback = (context: any) => {
+        const callback: AddinEventCallback = () => {
           return;
         };
 
