@@ -43,6 +43,11 @@ export interface AddinClientCallbacks {
   settingsClick?: () => void;
 
   /**
+   * Callback raised for box add-ins indicating that a control action button was clicked.
+   */
+  actionClick?: (action: string) => void;
+
+  /**
    * Callback raised indicating the UX theme was changed in the host.
    */
   themeChange?: (settings: AddinClientThemeSettings) => void;

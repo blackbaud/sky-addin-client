@@ -644,6 +644,11 @@ export class AddinClient {
               this.args.callbacks.settingsClick();
             }
             break;
+          case 'action-click':
+            if (this.args.callbacks.actionClick) {
+              this.args.callbacks.actionClick(data.message.reason);
+            }
+            break;
           case 'theme-change':
             if (this.args.callbacks.themeChange) {
               this.args.callbacks.themeChange(data.message.themeSettings);

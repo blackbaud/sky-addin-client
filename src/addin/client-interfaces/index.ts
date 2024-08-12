@@ -1,3 +1,5 @@
+export * from './addin-box-config';
+export * from './addin-box-control';
 export * from './addin-button-config';
 export * from './addin-button-style';
 export * from './addin-client-args';
