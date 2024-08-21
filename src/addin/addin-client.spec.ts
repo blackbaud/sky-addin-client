@@ -343,6 +343,57 @@ describe('AddinClient ', () => {
 
     });
 
+    describe('action-click', () => {
+
+      it('should call the "actionClick" callback.',
+        () => {
+          let actionClickCalled = false;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; },
+              actionClick: () => { actionClickCalled = true; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'action-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          expect(actionClickCalled).toBe(true);
+        });
+
+      it('should tolerate the "actionClick" callback being undefined.',
+        () => {
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'action-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+        // No assertion.  Just don't fail.
+      });
+
+    });
+
     describe('help-click', () => {
 
       it('should call the "helpClick" callback.',

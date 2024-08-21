@@ -12,6 +12,11 @@ export interface AddinClientCallbacks {
   init: (args: AddinClientInitArgs) => void;
 
   /**
+   * Callback raised for box add-ins indicating that a control action was clicked.
+   */
+  actionClick?: (action: string) => void;
+
+  /**
    * Callback raised for button add-ins indicating that the button was clicked.
    */
   buttonClick?: () => void;
