@@ -1,3 +1,7 @@
+# 1.4.0 (2024-08-21)
+- Added a `actionClick` callback for Box Add-ins to allow developers to take action when actions are clicked.
+- Added `AddinBoxConfig` interface for defining configuration options for `Box add-ins`.
+
 # 1.3.0 (2024-06-18)
 - Added `AddinClientConfig` interface to allow additional host origins to be supplied by an `AddinClient`.
 

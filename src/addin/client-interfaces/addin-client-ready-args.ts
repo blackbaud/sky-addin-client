@@ -1,4 +1,5 @@
 import { AddinActionButtonConfig } from './addin-action-button-config';
+import { AddinBoxConfig } from './addin-box-config';
 import { AddinButtonConfig } from './addin-button-config';
 import { AddinModalConfig } from './addin-modal-config';
 import { AddinTabConfig } from './addin-tab-config';
@@ -44,4 +45,9 @@ export interface AddinClientReadyArgs {
    * Provides additional configuration for Tab add-ins
    */
   tabConfig?: AddinTabConfig;
+
+  /**
+   * Provides additional configuration for Box add-ins
+   */
+  boxConfig?: AddinBoxConfig;
 }

@@ -594,6 +594,11 @@ export class AddinClient {
       } else if (this.isFromValidOrigin(event)) {
         /* tslint:disable-next-line switch-default */
         switch (data.messageType) {
+          case 'action-click':
+            if (this.args.callbacks.actionClick) {
+              this.args.callbacks.actionClick(data.message.reason);
+            }
+            break;
           case 'auth-token':
           case 'auth-token-fail':
             this.handleAuthTokenMessage(data);
