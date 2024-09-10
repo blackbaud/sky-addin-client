@@ -571,8 +571,8 @@ export class AddinClient {
 
         this.trackHeightChangesOfAddinContent();
 
-        // set the supported event types
-        this.supportedEventTypes = data.message.supportedEventTypes;
+        // set the supported event types (default to empty array)
+        this.supportedEventTypes = data.message.supportedEventTypes || [];
 
         // Pass key data to the add-in for it to initiailze.
         this.args.callbacks.init({
@@ -587,7 +587,7 @@ export class AddinClient {
               messageType: 'addin-ready'
             });
           },
-          supportedEventTypes : data.message.supportedEventTypes,
+          supportedEventTypes : this.supportedEventTypes,
           themeSettings: data.message.themeSettings
         });
 
