@@ -1490,6 +1490,22 @@ describe('AddinClient ', () => {
       expect((client as any).supportedEventTypes).toEqual(['update-settings']);
     });
 
+    it('should initialize add-in with empty event types.',
+      () => {
+        const msg: AddinHostMessageEventData = {
+          message: {
+            context: 'my_context',
+            envId: 'my_envid'
+          },
+          messageType: 'host-ready',
+          source: 'bb-addin-host'
+        };
+  
+        postMessageFromHost(msg);
+  
+        expect((client as any).supportedEventTypes).toEqual([]);
+      });
+
     it('should raise "client-event" event with proper message.',
     (done) => {
       let postedMessage: any;
