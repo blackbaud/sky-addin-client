@@ -22,9 +22,24 @@ export interface AddinTileConfig {
 
   /**
    * Indicates whether to show the Help icon in the tile chrome
-   * @deprecated See _Deprecated help support_ in README
+   * @deprecated Use {@link AddinTileConfig#showInlineHelp} instead
    */
   showHelp?: boolean;
+
+  /**
+   * Indicates whether to show the inline help icon next to the tile header text
+   */
+  showInlineHelp?: boolean;
+
+  /**
+   * The content of the inline help popover
+   */
+  helpPopoverContent?: string;
+
+  /**
+   * The title of the inline help popover
+   */
+  helpPopoverTitle?: string;
 
   /**
    * Indicates whether to show the Settings icon in the tile chrome

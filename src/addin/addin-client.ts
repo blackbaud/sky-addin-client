@@ -644,6 +644,11 @@ export class AddinClient {
               this.args.callbacks.helpClick();
             }
             break;
+          case 'inline-help-click':
+            if (this.args.callbacks.inlineHelpClick) {
+              this.args.callbacks.inlineHelpClick();
+            }
+            break;
           case 'settings-click':
             if (this.args.callbacks.settingsClick) {
               this.args.callbacks.settingsClick();

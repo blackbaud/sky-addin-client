@@ -93,10 +93,10 @@ For tile add-ins, the URL for the add-in will be rendered in a visible iframe on
 The host page will handle rendering the tile component around the add-in iframe.  When calling the `ready` callback, the `title` field will indicate the title for the tile.  Initially, the entire tile will be hidden, and will show on the page if `showUI` is set to `true` in the callback.  You can set it to `false` to indicate that the tile should not be shown, based on the user's privileges or context of the current record, etc.
 
 Tile add-ins support an optional configuration object that can be used to further control the look/feel/behavior of the tile within the host application.  For
-example, to control whether any additional summary text/image is shown when the tile is collapsed, and control whether the "settings" icons appear
+example, to control whether any additional summary text/image is shown when the tile is collapsed, and control whether the "inline help" or "settings" icons appear
 in the tile header.
 
-Tile add-ins support optional callbacks for `settingsClick`, which will be invoked whenever the user clicks the "settings" icons, respectively:
+Tile add-ins support optional callbacks for `inlineHelpClick` and `settingsClick`, which will be invoked whenever the user clicks the "inline help" or "settings" icons, respectively:
 
 ```js
 var client = new AddinClient({
@@ -108,12 +108,39 @@ var client = new AddinClient({
         tileConfig: {
           summaryStyle: BBSkyAddinClient.AddinTileSummaryStyle.Text,
           summaryText: '18 records',
+          showInlineHelp: true,
           showSettings: true
         }
       });
     },
+    inlineHelpClick: () => {
+      // The user has clicked the "Inline Help" icon in the tile header
+    },
     settingsClick: () => {
       // The user has clicked the "Settings" icon in the tile header
+    }
+  }
+});
+```
+
+Tile add-ins also support optional `helpPopoverContent` and `helpPopoverTitle` configuration properties to specify help text to be displayed in a popover when the "inline help" icon is clicked.
+
+```js
+var client = new AddinClient({
+  callbacks: {
+    init: (args) => {
+      args.ready({
+        showUI: true,
+        title: 'My Custom Tile Title',
+        tileConfig: {
+          showInlineHelp: true,
+          helpPopoverContent: 'Help popover content text',
+          helpPopoverTitle: 'Help popover title'
+        }
+      });
+    },
+    inlineHelpClick: () => {
+      // The user has clicked the "Inline Help" icon in the tile header
     }
   }
 });
@@ -283,6 +310,14 @@ The add-in can choose to navigate the parent page based on user interactions.  T
 ```js
 var client = new AddinClient({...});
 client.navigate({ url: '<target_url>' });
+```
+
+#### Opening the Blackbaud Help flyout (Internal-use only)
+The add-in can instruct the parent page to display the Help flyout, and specify which topic to display. To do this, call the `openHelp` method on the `AddinClient` object. This function takes an object argument with property `helpKey` for the name of the help topic to display. A single .html file should be named.
+
+```js
+var client = new AddinClient({...});
+client.openHelp({ helpKey: '<target_page>.html' });
 ```
 
 #### Showing a toast
