@@ -38,9 +38,14 @@ export interface AddinClientCallbacks {
 
   /**
    * Callback raised for tile add-ins indicating that the help button was clicked.
-   * @deprecated See _Deprecated help support_ in README
+   * @deprecated Use {@link AddinTileConfig.showInlineHelp} to show inline help instead and handle {@link inlineHelpClick} callback.
    */
   helpClick?: () => void;
+
+  /**
+   * Callback raised for tile add-ins indicating that the inline help button was clicked.
+   */
+  inlineHelpClick?: () => void;
 
   /**
    * Callback raised for tile add-ins indicating that the settings button was clicked.

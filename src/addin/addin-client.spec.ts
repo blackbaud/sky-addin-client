@@ -445,6 +445,57 @@ describe('AddinClient ', () => {
 
     });
 
+    describe('inline-help-click', () => {
+
+      it('should call the "inlineHelpClick" callback.',
+        () => {
+          let inlineHelpClickCalled = false;
+
+          const client = new AddinClient({
+            callbacks: {
+              inlineHelpClick: () => { inlineHelpClickCalled = true; },
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'inline-help-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          expect(inlineHelpClickCalled).toBe(true);
+        });
+
+      it('should tolerate the "inlineHelpClick" callback being undefined.',
+        () => {
+          const client = new AddinClient({
+            callbacks: {
+              init: () => { return; }
+            }
+          });
+
+          initializeHost();
+
+          const msg: AddinHostMessageEventData = {
+            message: {},
+            messageType: 'inline-help-click',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+          client.destroy();
+
+          // No assertion.  Just don't fail.
+        });
+
+    });
+
     describe('settings-click', () => {
 
       it('should call the "settingsClick" callback.',
