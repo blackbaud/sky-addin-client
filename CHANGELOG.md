@@ -1,4 +1,4 @@
-# 1.5.0 (2024-10-07)
+# 1.5.0 (2024-10-08)
 - Added `showInlineHelp`, `helpPopoverContent`, and `helpPopoverTitle` properties in `AddinTileConfig` to support inline help in tile header.
 - Added `inlineHelpClick` callback in `AddinClientCallbacks` to handle inline help button click.
 
