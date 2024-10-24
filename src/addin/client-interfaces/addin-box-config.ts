@@ -8,9 +8,4 @@ export interface AddinBoxConfig {
    * The controls to use for the box context menu
    */
   controls: AddinBoxControl[] | undefined;
-
-  /**
-   * The help key to open when the Help icon is clicked
-   */
-  helpKey?: string | undefined;
 }
