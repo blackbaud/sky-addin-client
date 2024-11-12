@@ -79,7 +79,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(81);
+      expect((<any>client).allowedOrigins.length).toBe(18);
     });
 
     it ('should initialize AddinClient with additional allowedOrigins', () => {
@@ -97,7 +97,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(84);
+      expect((<any>client).allowedOrigins.length).toBe(21);
     });
 
     it ('additional allowedOrigins - removing duplicates', () => {
@@ -116,7 +116,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(82);
+      expect((<any>client).allowedOrigins.length).toBe(19);
     });
 
   });
@@ -1886,69 +1886,7 @@ describe('AddinClient ', () => {
       'https://my.test.myschooltraining.com',
       'https://test_site.myschooltraining.com',
       'https://test-site.myschooltraining.com',
-      'https://view-my.test_site.myschooltraining.com',
-      'https://give.blackbaudwp.com',
-      'https://participate.carrytheload.org',
-      'https://secure.ummsfoundation.org',
-      'http://participate.lcrf.org',
-      'https://secure.go2.org',
-      'https://give.nationwidechildrens.org',
-      'https://support.lupus.org',
-      'https://secure.operationsmile.ca',
-      'https://secure2.convio.net',
-      'https://secure.ontariospca.ca',
-      'https://events.brighamandwomens.org',
-      'https://secure.northernlighthealth.org',
-      'http://hjcnm.convio.net',
-      'https://secure.alpha1.org',
-      'https://fundraising.pscpartners.org',
-      'https://hope.mercyforanimals.org',
-      'https://secure.braintumor.org',
-      'https://support.cancer.ca',
-      'https://secure.phoenixchildrensfoundation.org',
-      'https://secure.ocmc.org',
-      'https://support.stlouischildrens.org',
-      'https://give.choa.org',
-      'https://secure.acsevents.org',
-      'https://secure.operationsmile.org',
-      'https://give.mdmercy.com',
-      'https://foundation.cookchildrens.org',
-      'https://secure1.chla.org',
-      'https://secure.nleomf.org',
-      'https://secure.pwatoronto.org',
-      'https://support.jfsla.org',
-      'https://give.roswellpark.org',
-      'https://secure.alsagoldenwest.org',
-      'https://events.cancercarefoundation.ca',
-      'https://secure.alsnc.org',
-      'https://secure.alsanm.org',
-      'https://secure.waysidewaifs.org',
-      'https://www.bladdercancercanada.org',
-      'https://danafarber.jimmyfund.org',
-      'https://secure.info-komen.org',
-      'https://giving.mountsinai.org',
-      'https://www.walkforpd.ca',
-      'https://secure.alsoregon.org',
-      'https://www.feedhopenow.org',
-      'https://secure.trilliumgiving.ca',
-      'https://www.swimacrossamerica.org',
-      'https://ovariancanada.org',
-      'https://secure.alsunitedchicago.org',
-      'https://secure.fredhutch.org',
-      'https://www.hss.edu',
-      'https://donate.nyghfoundation.ca',
-      'https://secure.natureconservancy.ca',
-      'https://secure.llscanada.org',
-      'https://secure.als-ny.org',
-      'https://support.zerocancer.org',
-      'https://secure.alsmidatlantic.org',
-      'https://support.habitat.ca',
-      'https://support.stamfordhospitalfoundation.org',
-      'https://secure.alsohio.org',
-      'https://support.cancercarefdn.mb.ca',
-      'https://support.baycrestfoundation.org',
-      'https://give.southlake.ca',
-      'https://donate.parkinson.ca',
+      'https://view-my.test_site.myschooltraining.com'
     ].forEach((url) => {
       it(`should not warn because ${url} is allowed.`,
         () => {

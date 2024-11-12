@@ -1,3 +1,6 @@
+# 1.6.0 (2024-11-12)
+- Removed Good Move EMC portal origins from the `allowedOrigins` array.
+
 # 1.5.1 (2024-10-24)
 - Removed unused `helpKey` property from the `AddinBoxConfig`
 
