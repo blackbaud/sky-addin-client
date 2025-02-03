@@ -43,7 +43,7 @@ export interface AddinClientCallbacks {
   helpClick?: () => void;
 
   /**
-   * Callback raised for tile add-ins indicating that the inline help button was clicked.
+   * Callback raised for tile add-ins and box add-ins indicating that the inline help button was clicked.
    */
   inlineHelpClick?: () => void;
 
