@@ -1,3 +1,6 @@
+# 1.6.1 (2025-02-03)
+- Added `showInlineHelp`, `helpPopoverContent`, and `helpPopoverTitle` properties in `AddinBoxConfig` to support inline help in the box header.
+
 # 1.6.0 (2024-11-12)
 - Removed Good Move EMC portal origins from the `allowedOrigins` array.
 
