@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/sky-addin-client",
-  "version": "1.6.1",
+  "version": "1.7.1",
   "description": "SKY add-in client",
   "main": "dist/bundles/sky-addin-client.umd.js",
   "module": "index.ts",
@@ -16,7 +16,8 @@
     "watch": "npm run test:unit -- --auto-watch --no-single-run",
     "eslint": "eslint index.ts src/**/*.ts",
     "lint": "npm run eslint",
-    "format": "prettier --config .prettierrc 'src/**/*.ts' --write"
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "dev": "nodemon --watch .yalc --watch src/addin --ext ts,html,scss,json -x \"npm run build && yalc publish --push ."
   },
   "pipelineSettings": {
     "publishToCDN": true,

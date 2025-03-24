@@ -1471,7 +1471,7 @@ describe('AddinClient ', () => {
         client.addEventHandler('form-save', (context, saveDone) => {
           callbackCalled = true;
           callbackContext = context;
-          saveDone();
+          saveDone(undefined);
         });
 
         const msg: AddinHostMessageEventData = {
@@ -1551,9 +1551,9 @@ describe('AddinClient ', () => {
           messageType: 'host-ready',
           source: 'bb-addin-host'
         };
-  
+
         postMessageFromHost(msg);
-  
+
         expect((client as any).supportedEventTypes).toEqual([]);
       });
 
