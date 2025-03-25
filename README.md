@@ -222,12 +222,12 @@ var client = new AddinClient({
 });
 
 // To handle add-in events, call the addEventHandler method
-client.addEventHandler({
-  eventType: 'form-data-update',
-  callback: function (context) {
+client.addEventHandler(
+  'form-data-update',
+  function (context) {
     // get updated data from context object
   }
-});
+);
 ```
 
 Entry forms may also support the `form-save` and `form-cancel` event types.  These event types allow the add-in client to perform an asynchronous task (e.g. call a backend service) while the form is closing.  The callback's `done()` function MUST be called to allow the form to close.
@@ -245,14 +245,14 @@ var client = new AddinClient({
 });
 
 // To handle add-in events, call the addEventHandler method
-client.addEventHandler({
-  eventType: 'form-save',
-  callback: function (context, done) {
+client.addEventHandler(
+  'form-save',
+  function (context, done) {
     // handle the save event, asynchronously
 
     done(); // When done, call the done function (tells the entry form it's OK to close)
   }
-});
+);
 ```
 
 #### Showing a modal
