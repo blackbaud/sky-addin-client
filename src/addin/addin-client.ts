@@ -50,7 +50,7 @@ const allowedOrigins = [
  * - 'form-cancel'
  * - 'load-data'
  */
-export type AddinEventCallback = (context: any, done?: (data: any | undefined) => void) => void;
+export type AddinEventCallback = (context: any, done?: (data?: any) => void) => void;
 
 /**
  * Client for interacting with the parent page hosting the add-in.
@@ -704,7 +704,7 @@ export class AddinClient {
       promise = Promise.resolve();
     }
 
-    promise.then(() => this.postEventReceivedMessage(message.eventRequestId));
+    promise.then((data?: any) => this.postEventReceivedMessage(message.eventRequestId, data));
   }
 
   /**
@@ -728,10 +728,11 @@ export class AddinClient {
    * Posts a message to the host page to indicate that a certain event has been received.
    * @param eventRequestId The ID of the event request that was received.
    */
-  private postEventReceivedMessage(eventRequestId: number) {
+  private postEventReceivedMessage(eventRequestId: number, data?: any) {
     this.postMessageToHostPage({
       message: {
-        eventRequestId
+        eventRequestId: eventRequestId,
+        data: data
       },
       messageType: 'event-received'
     });

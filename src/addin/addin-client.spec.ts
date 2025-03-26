@@ -1471,7 +1471,7 @@ describe('AddinClient ', () => {
         client.addEventHandler('form-save', (context, saveDone) => {
           callbackCalled = true;
           callbackContext = context;
-          saveDone(undefined);
+          saveDone();
         });
 
         const msg: AddinHostMessageEventData = {
