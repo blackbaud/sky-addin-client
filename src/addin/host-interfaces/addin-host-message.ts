@@ -51,4 +51,9 @@ export interface AddinHostMessage {
    * The UX theme of the host page, which will vary for different extension points.
    */
   themeSettings?: AddinClientThemeSettings;
+
+  /**
+   * Data being returned back to the host from the add-in client.
+   */
+  data?: any;
 }
