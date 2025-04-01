@@ -1,4 +1,4 @@
-# 1.7.0 (2025-03-24)
+# 1.7.0 (2025-04-01)
 - Update `AddinEventCallback` to allow data to be returned.
 
 # 1.6.1 (2025-02-03)
