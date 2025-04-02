@@ -1,3 +1,6 @@
+# 1.7.0 (2025-04-01)
+- Update `AddinEventCallback` to allow data to be returned.
+
 # 1.6.1 (2025-02-03)
 - Added `showInlineHelp`, `helpPopoverContent`, and `helpPopoverTitle` properties in `AddinBoxConfig` to support inline help in the box header.
 

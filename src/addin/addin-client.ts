@@ -48,8 +48,9 @@ const allowedOrigins = [
  * The following event types require the 'done' callback to be provided:
  * - 'form-save'
  * - 'form-cancel'
+ * - 'load-data'
  */
-export type AddinEventCallback = (context: any, done?: () => void) => void;
+export type AddinEventCallback = (context: any, done?: (data?: any) => void) => void;
 
 /**
  * Client for interacting with the parent page hosting the add-in.
@@ -685,25 +686,25 @@ export class AddinClient {
   private processHostEvent(message: AddinHostMessage) {
     const eventArgs: AddinClientEventArgs = message.context;
     const callback: AddinEventCallback = this.registeredAddinEvents[eventArgs.type];
-    let promise: Promise<void>;
+    let promise: Promise<any>;
     if (callback) {
       if (this.isBlockingEventType(eventArgs.type)) {
         promise = new Promise((resolve) => {
-          callback(eventArgs.context, () => {
-            resolve();
+          callback(eventArgs.context, (data) => {
+            resolve(data);
           });
         });
       } else {
         promise = new Promise((resolve) => {
           callback(eventArgs.context);
-          resolve();
+          resolve(undefined);
         });
       }
     } else {
       promise = Promise.resolve();
     }
 
-    promise.then(() => this.postEventReceivedMessage(message.eventRequestId));
+    promise.then((data?: any) => this.postEventReceivedMessage(message.eventRequestId, data));
   }
 
   /**
@@ -715,6 +716,7 @@ export class AddinClient {
     switch (type) {
       case 'form-save':
       case 'form-cancel':
+      case 'load-data':
         return true;
       default: break;
     }
@@ -726,10 +728,11 @@ export class AddinClient {
    * Posts a message to the host page to indicate that a certain event has been received.
    * @param eventRequestId The ID of the event request that was received.
    */
-  private postEventReceivedMessage(eventRequestId: number) {
+  private postEventReceivedMessage(eventRequestId: number, data?: any) {
     this.postMessageToHostPage({
       message: {
-        eventRequestId
+        eventRequestId: eventRequestId,
+        data: data
       },
       messageType: 'event-received'
     });
