@@ -1,3 +1,6 @@
+# 1.7.1 (2025-07-08)
+- Update `AddinClientThemeSettings` to support serialized UX theme settings.
+
 # 1.7.0 (2025-04-01)
 - Update `AddinEventCallback` to allow data to be returned.
 

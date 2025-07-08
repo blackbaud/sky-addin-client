@@ -194,7 +194,8 @@ describe('AddinClient ', () => {
               supportedEventTypes: ['update-event'],
               themeSettings: {
                 mode: 'light',
-                theme: 'default'
+                theme: 'default',
+                skyThemeSettings: '{"theme":{"name":"modern","supportedModes":[{"name":"default","isPreset":true}],"isPreset":true},"mode":{"name":"light","isPreset":true}}'
               }
             },
             messageType: 'host-ready',
@@ -210,7 +211,8 @@ describe('AddinClient ', () => {
           expect(initArgs.supportedEventTypes).toEqual(['update-event']);
           expect(initArgs.themeSettings).toEqual({
             mode: 'light',
-            theme: 'default'
+            theme: 'default',
+            skyThemeSettings: '{"theme":{"name":"modern","supportedModes":[{"name":"default","isPreset":true}],"isPreset":true},"mode":{"name":"light","isPreset":true}}'
           });
         });
 

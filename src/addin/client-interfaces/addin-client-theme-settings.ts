@@ -12,4 +12,9 @@ export interface AddinClientThemeSettings {
    * The theme mode.
    */
   mode: string;
+
+  /**
+   * Serialized theme settings for the UX theme and branding.
+   */
+  skyThemeSettings: string;
 }
