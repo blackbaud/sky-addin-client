@@ -79,7 +79,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(18);
+      expect((<any>client).allowedOrigins.length).toBe(19);
     });
 
     it ('should initialize AddinClient with additional allowedOrigins', () => {
@@ -97,7 +97,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(21);
+      expect((<any>client).allowedOrigins.length).toBe(22);
     });
 
     it ('additional allowedOrigins - removing duplicates', () => {
@@ -116,7 +116,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(19);
+      expect((<any>client).allowedOrigins.length).toBe(20);
     });
 
   });
@@ -1943,7 +1943,8 @@ describe('AddinClient ', () => {
       'https://my.test.myschooltraining.com',
       'https://test_site.myschooltraining.com',
       'https://test-site.myschooltraining.com',
-      'https://view-my.test_site.myschooltraining.com'
+      'https://view-my.test_site.myschooltraining.com',
+      'https://test.justgiving.com'
     ].forEach((url) => {
       it(`should not warn because ${url} is allowed.`,
         () => {
