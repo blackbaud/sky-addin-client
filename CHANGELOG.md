@@ -1,3 +1,6 @@
+# 1.7.2 (2025-07-15)
+- Updated `allowedOrigins` to support JustGiving
+
 # 1.7.1 (2025-07-08)
 - Update `AddinClientThemeSettings` to support serialized UX theme settings.
 

@@ -1943,7 +1943,8 @@ describe('AddinClient ', () => {
       'https://my.test.myschooltraining.com',
       'https://test_site.myschooltraining.com',
       'https://test-site.myschooltraining.com',
-      'https://view-my.test_site.myschooltraining.com'
+      'https://view-my.test_site.myschooltraining.com',
+      'https://test.justgiving.com'
     ].forEach((url) => {
       it(`should not warn because ${url} is allowed.`,
         () => {
