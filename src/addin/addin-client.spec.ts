@@ -79,7 +79,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(18);
+      expect((<any>client).allowedOrigins.length).toBe(19);
     });
 
     it ('should initialize AddinClient with additional allowedOrigins', () => {
@@ -97,7 +97,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(21);
+      expect((<any>client).allowedOrigins.length).toBe(22);
     });
 
     it ('additional allowedOrigins - removing duplicates', () => {
@@ -116,7 +116,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(19);
+      expect((<any>client).allowedOrigins.length).toBe(20);
     });
 
   });
