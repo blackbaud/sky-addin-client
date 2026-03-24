@@ -1,4 +1,4 @@
-# 1.7.2 (2026-03-24)
+# 1.7.3 (2026-03-24)
 - Updated `allowedOrigins` to support Luminate Online on T60
 -
 # 1.7.2 (2025-07-15)
