@@ -22,6 +22,7 @@ const allowedOrigins = [
   /^https\:\/\/[\w\-\.]+\.blackbaud\.com$/,
   /^https\:\/\/[\w\-\.]+\.blackbaud\-dev\.com$/,
   /^http\:\/\/[\w\-\.]+\.blackbaud\-dev\.com$/,
+  /^https\:\/\/[\w\-\.]+\.blackbaud\-test\.com$/,
   /^https\:\/\/[\w\-\.]+\.blackbaudhosting\.com$/,
   /^https\:\/\/[\w\-\.]+\.bbcloudservices\.com$/,
   /^https\:\/\/localhost(\:[0-9]+)?$/,
