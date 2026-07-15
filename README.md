@@ -272,7 +272,24 @@ client.showModal({
 ##### Modal add-in
 The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY Add-in Client Library and make use of the `AddinClient`.
 
-The modal add-in will be responsible for rendering the modal element itself (including any chrome around the modal content).  To create a native modal experience, the add-in may set the body background to `transparent` and launch a SKY UX modal within its full screen iframe.
+The modal add-in will be responsible for rendering the modal element itself (including any chrome around the modal content).  To create a native modal experience, launch your modal within the full screen iframe and enable transparent modal backgrounds.
+
+Set `config.enableModalBackgroundTransparency` to `true` when constructing the client. On init it will:
+- set the iframe `body` background to `transparent`, so the host page shows through behind the modal, and
+- add a `sky-addin-modal` class to `body`, and inject a stylesheet that hides SKY UX's `.sky-modal-host-backdrop` while that class is present, so the SKY UX modal's own backdrop does not double up with the host's.
+
+This replaces manually adding `body { background: transparent }` and `.sky-modal-host-backdrop { display: none }`. The flag is off by default, so existing add-ins are unaffected.
+
+```js
+var client = new AddinClient({
+  callbacks: { /* ... */ },
+  config: {
+    enableModalBackgroundTransparency: true
+  }
+});
+```
+
+No `@skyux/modals` upgrade is required for this — backdrop suppression is implemented entirely inside `sky-addin-client` via a runtime stylesheet, not inside `@skyux/modals` itself. (Last verified against `.sky-modal-host-backdrop` in `@skyux/modals` — re-check this selector if you see the backdrop reappear after a `@skyux/modals` major-version upgrade.)
 
 As with a typical add-in, the modal add-in should register for the `init` callback and will receive `envId` in the arguments. The `context` field for arguments will match the context object passed into the `showModal` call from the parent add-in.  Note that this is crossing iframes so the object has been serialized and deserialized.  It can be used for passing data but not functions.
 
