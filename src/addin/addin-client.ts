@@ -536,13 +536,27 @@ export class AddinClient {
         // implementation detail, not a published contract, so re-verify this selector if
         // @skyux/modals ever changes its backdrop markup/class name.
         if (this.args.config?.enableModalBackgroundTransparency) {
+          // Make the iframe's body transparent so the host page shows through behind the modal
+          // instead of being painted over by the add-in's own opaque body.
           document.body.style.background = 'transparent';
+
+          // Stamp the marker class on <body>; the injected stylesheet below scopes its rule to
+          // this class so the suppression only applies while the opted-in add-in is active.
           document.body.classList.add(AddinClient.MODAL_MARKER_CLASS);
 
+          // Inject the backdrop-suppression stylesheet only once. host-ready can fire more than
+          // once, and the id check prevents appending duplicate <style> elements to <head>.
           if (!document.getElementById(AddinClient.MODAL_BACKDROP_STYLE_ID)) {
+            // Build a <style> element identified by our constant id so we can dedupe (above).
             const style = document.createElement('style');
             style.id = AddinClient.MODAL_BACKDROP_STYLE_ID;
+
+            // Hide @skyux/modals's own backdrop while the marker class is present, so it does
+            // not double up with the host's scrim. The two-class selector plus !important gives
+            // this rule enough specificity to win from outside @skyux/modals's own stylesheet.
             style.textContent = `body.${AddinClient.MODAL_MARKER_CLASS} .sky-modal-host-backdrop { display: none !important; }`;
+
+            // Append to <head> so the rule takes effect for the current document.
             document.head.appendChild(style);
           }
         }
