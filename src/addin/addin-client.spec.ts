@@ -723,6 +723,106 @@ describe('AddinClient ', () => {
 
   });
 
+  describe('modal background transparency', () => {
+    afterEach(() => {
+      // Undo any body/head mutations so tests do not leak into each other.
+      document.body.classList.remove('sky-addin-modal');
+      document.body.style.removeProperty('background');
+      document.getElementById('sky-addin-client-modal-backdrop-style')?.remove();
+    });
+
+    function postHostReady() {
+      postMessageFromHost({
+        message: { context: {}, envId: 'e' },
+        messageType: 'host-ready',
+        source: 'bb-addin-host',
+      });
+    }
+
+    it('should set a transparent body background and marker class when opted in.', () => {
+      const client = new AddinClient({
+        callbacks: { init: () => { /* no-op */ } },
+        config: { enableModalBackgroundTransparency: true },
+      });
+
+      postHostReady();
+
+      expect(document.body.style.background).toContain('transparent');
+      expect(document.body.classList.contains('sky-addin-modal')).toBe(true);
+
+      client.destroy();
+    });
+
+    it('should NOT modify the body when the flag is not set (default).', () => {
+      const client = new AddinClient({
+        callbacks: { init: () => { /* no-op */ } },
+      });
+
+      postHostReady();
+
+      expect(document.body.style.background).not.toContain('transparent');
+      expect(document.body.classList.contains('sky-addin-modal')).toBe(false);
+
+      client.destroy();
+    });
+
+    it('should NOT modify the body when the flag is explicitly false.', () => {
+      const client = new AddinClient({
+        callbacks: { init: () => { /* no-op */ } },
+        config: { enableModalBackgroundTransparency: false },
+      });
+
+      postHostReady();
+
+      expect(document.body.classList.contains('sky-addin-modal')).toBe(false);
+
+      client.destroy();
+    });
+
+    it('should inject a stylesheet hiding .sky-modal-host-backdrop when opted in.', () => {
+      const client = new AddinClient({
+        callbacks: { init: () => { /* no-op */ } },
+        config: { enableModalBackgroundTransparency: true },
+      });
+
+      postHostReady();
+
+      const style = document.getElementById('sky-addin-client-modal-backdrop-style');
+      expect(style).not.toBeNull();
+      expect(style?.textContent).toContain('.sky-modal-host-backdrop');
+      expect(style?.textContent).toContain('display: none');
+
+      client.destroy();
+    });
+
+    it('should NOT inject any stylesheet when the flag is not set (default).', () => {
+      const client = new AddinClient({
+        callbacks: { init: () => { /* no-op */ } },
+      });
+
+      postHostReady();
+
+      expect(document.getElementById('sky-addin-client-modal-backdrop-style')).toBeNull();
+
+      client.destroy();
+    });
+
+    it('should not inject a duplicate stylesheet if host-ready fires more than once.', () => {
+      const client = new AddinClient({
+        callbacks: { init: () => { /* no-op */ } },
+        config: { enableModalBackgroundTransparency: true },
+      });
+
+      postHostReady();
+      postHostReady();
+
+      const styles = document.querySelectorAll('#sky-addin-client-modal-backdrop-style');
+      expect(styles.length).toBe(1);
+
+      client.destroy();
+    });
+  });
+
   describe('init ready callback', () => {
 
     it('should raise "addin-ready" event.',
