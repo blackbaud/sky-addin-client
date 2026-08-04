@@ -12,6 +12,7 @@ import { AddinClientShowFlyoutResult } from './client-interfaces/addin-client-sh
 import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-modal-args';
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
+import { AddinModalConfig } from './client-interfaces/addin-modal-config';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
@@ -144,6 +145,27 @@ export class AddinClient {
   private supportedEventTypes: string[] = [];
 
   /**
+   * Class added to the body when the client owns its transparent background state.
+   */
+  private readonly transparentBackgroundClass = 'bb-sky-addin-client-transparent-background';
+
+  /**
+   * Preferred ID for the client-owned transparent background style.
+   */
+  private readonly transparentBackgroundStyleId =
+    'bb-sky-addin-client-transparent-background-style';
+
+  /**
+   * Indicates whether this client added the transparent background class.
+   */
+  private ownsTransparentBackgroundClass = false;
+
+  /**
+   * The transparent background style element created by this client.
+   */
+  private transparentBackgroundStyleElement: HTMLStyleElement;
+
+  /**
    * Collection of regexs for our whitelist of host origins.
    */
   private allowedOrigins: RegExp[] = allowedOrigins;
@@ -179,6 +201,8 @@ export class AddinClient {
     if (this.heightChangeIntervalId) {
       clearInterval(this.heightChangeIntervalId);
     }
+
+    this.cleanupTransparentBackground();
   }
 
   /**
@@ -439,6 +463,51 @@ export class AddinClient {
   }
 
   /**
+   * Applies the client-owned document body transparency for a modal add-in.
+   * @param style The modal style from the ready args.
+   */
+  private applyModalStyle(style: AddinModalConfig['style']) {
+    if (style?.transparentBackground !== true) {
+      this.cleanupTransparentBackground();
+      return;
+    }
+
+    if (!document.body.classList.contains(this.transparentBackgroundClass)) {
+      document.body.classList.add(this.transparentBackgroundClass);
+      this.ownsTransparentBackgroundClass = true;
+    }
+
+    if (!this.transparentBackgroundStyleElement?.parentNode) {
+      const styleElement = document.createElement('style');
+      if (!document.getElementById(this.transparentBackgroundStyleId)) {
+        styleElement.id = this.transparentBackgroundStyleId;
+      }
+      styleElement.textContent =
+        `body.${this.transparentBackgroundClass} ` +
+        '{ background: transparent !important; }';
+      document.head.appendChild(styleElement);
+      this.transparentBackgroundStyleElement = styleElement;
+    }
+  }
+
+  /**
+   * Removes document body background state owned by this client.
+   */
+  private cleanupTransparentBackground() {
+    if (this.ownsTransparentBackgroundClass) {
+      document.body.classList.remove(this.transparentBackgroundClass);
+      this.ownsTransparentBackgroundClass = false;
+    }
+
+    if (this.transparentBackgroundStyleElement?.parentNode) {
+      this.transparentBackgroundStyleElement.parentNode.removeChild(
+        this.transparentBackgroundStyleElement
+      );
+    }
+    this.transparentBackgroundStyleElement = undefined;
+  }
+
+  /**
    * Post a message to the host page informing it that the add-in is
    * now started and listening for messages from the host.
    */
@@ -520,6 +589,8 @@ export class AddinClient {
           displayMode: data.message.displayMode,
           envId: data.message.envId,
           ready: (args: AddinClientReadyArgs) => {
+            this.applyModalStyle(args?.modalConfig?.style);
+
             // Do an immediate height check since the add-in may render something
             // due to the context provided.  No need to wait a full second to reflect.
             this.checkForHeightChangesOfAddinContent();
