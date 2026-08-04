@@ -164,7 +164,7 @@ export class AddinClient {
   /**
    * The transparent background style element created by this client.
    */
-  private transparentBackgroundStyleElement: HTMLStyleElement;
+  private transparentBackgroundStyleElement: HTMLStyleElement | undefined;
 
   /**
    * Collection of regexs for our whitelist of host origins.
