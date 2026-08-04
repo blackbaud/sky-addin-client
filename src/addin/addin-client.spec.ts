@@ -761,6 +761,46 @@ describe('AddinClient ', () => {
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
       });
 
+    it('should pass hostOverlay: false through to the host in the "addin-ready" message.',
+      () => {
+        const readyArgs: AddinClientReadyArgs = {
+          modalConfig: {
+            style: {
+              hostOverlay: false
+            }
+          }
+        };
+        let postedMessage: any;
+        let postedOrigin: string;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready(readyArgs);
+            }
+          }
+        });
+
+        const msg: AddinHostMessageEventData = {
+          message: {},
+          messageType: 'host-ready',
+          source: 'bb-addin-host'
+        };
+
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin as string;
+        });
+
+        postMessageFromHost(msg);
+
+        client.destroy();
+
+        expect(postedMessage.messageType).toBe('addin-ready');
+        expect(postedMessage.message).toEqual(readyArgs);
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+      });
+
   });
 
   describe('closeModal', () => {
