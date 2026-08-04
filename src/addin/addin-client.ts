@@ -517,6 +517,7 @@ export class AddinClient {
         // Pass key data to the add-in for it to initiailze.
         this.args.callbacks.init({
           context: data.message.context,
+          displayMode: data.message.displayMode,
           envId: data.message.envId,
           ready: (args: AddinClientReadyArgs) => {
             // Do an immediate height check since the add-in may render something

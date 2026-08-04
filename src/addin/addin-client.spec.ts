@@ -190,6 +190,7 @@ describe('AddinClient ', () => {
           const msg: AddinHostMessageEventData = {
             message: {
               context: 'my_context',
+              displayMode: 'modal',
               envId: 'my_envid',
               supportedEventTypes: ['update-event'],
               themeSettings: {
@@ -207,6 +208,7 @@ describe('AddinClient ', () => {
           client.destroy();
 
           expect(initArgs.context).toBe('my_context');
+          expect(initArgs.displayMode).toBe('modal');
           expect(initArgs.envId).toBe('my_envid');
           expect(initArgs.supportedEventTypes).toEqual(['update-event']);
           expect(initArgs.themeSettings).toEqual({

@@ -17,6 +17,11 @@ export interface AddinClientInitArgs {
   context?: any;
 
   /**
+   * Identifies how the host is displaying this add-in.
+   */
+  displayMode?: 'modal';
+
+  /**
    * Event types that are supported by the host page.
    */
    supportedEventTypes?: string[];

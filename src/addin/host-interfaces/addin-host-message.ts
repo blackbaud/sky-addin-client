@@ -22,6 +22,11 @@ export interface AddinHostMessage {
   context?: any;
 
   /**
+   * Identifies how the host is displaying this add-in.
+   */
+  displayMode?: 'modal';
+
+  /**
    * The environment id of the host page.
    */
   envId?: string;
