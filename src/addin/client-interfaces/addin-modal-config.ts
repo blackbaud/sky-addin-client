@@ -9,7 +9,10 @@ export interface AddinModalStyle {
   transparentBackground?: boolean;
 
   /**
+   * Controls the host overlay appearance.
+   *
    * When false, asks a compatible host to make its overlay transparent.
+   * When true or omitted, the host retains its visible overlay.
    */
   hostOverlay?: boolean;
 }
