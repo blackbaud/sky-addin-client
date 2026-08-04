@@ -917,7 +917,7 @@ describe('AddinClient ', () => {
             init: (args: AddinClientInitArgs) => {
               args.ready({
                 modalConfig: {
-                  style: { hostOverlay: false } as any
+                  style: { hostOverlay: false }
                 }
               });
             }
