@@ -1,4 +1,4 @@
-# 1.8.0
+# 1.8.0 (2026-08-04)
 
 - Added canonical add-in type context to initialization arguments.
 - Added independent modal body-transparency and host-overlay style options.

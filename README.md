@@ -279,8 +279,8 @@ overlay through `modalConfig.style`:
 |---|---|
 | `transparentBackground: true` | Makes the add-in document body transparent before `addin-ready`. |
 | `transparentBackground: false` or omitted | Does not make the body transparent. |
-| `hostOverlay: false` | Asks a compatible host to retain its overlay element but make the overlay background transparent. |
-| `hostOverlay: true` or omitted | Retains the compatible host's visible overlay. |
+| `hostOverlay: false` | Asks a compatible host to make its overlay background transparent while keeping the overlay element. |
+| `hostOverlay: true` or omitted | Asks a compatible host to retain its visible overlay. |
 
 These options are independent and this library does not default them.
 
