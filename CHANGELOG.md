@@ -1,4 +1,4 @@
-# 1.8.0
+# 1.8.0 (2026-08-04)
 
 - Add independent modal body-transparency and host-overlay style options.
 - Forward optional modal display context without selecting style defaults.
