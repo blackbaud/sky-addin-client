@@ -272,7 +272,31 @@ client.showModal({
 ##### Modal add-in
 The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY Add-in Client Library and make use of the `AddinClient`.
 
-The modal add-in will be responsible for rendering the modal element itself (including any chrome around the modal content).  To create a native modal experience, the add-in may set the body background to `transparent` and launch a SKY UX modal within its full screen iframe.
+The modal add-in can independently configure its document body and a compatible host's
+overlay through `modalConfig.style`:
+
+| Option | Behavior |
+|---|---|
+| `transparentBackground: true` | Makes the add-in document body transparent before `addin-ready`. |
+| `transparentBackground: false` or omitted | Does not make the body transparent. |
+| `hostOverlay: false` | Asks a compatible host to retain its overlay element but make the overlay background transparent. |
+| `hostOverlay: true` or omitted | Retains the compatible host's visible overlay. |
+
+These options are independent and this library does not default them.
+
+```js
+args.ready({
+  showUI: true,
+  modalConfig: {
+    style: {
+      transparentBackground: true,
+      hostOverlay: false
+    }
+  }
+});
+```
+
+Older hosts ignore `hostOverlay` and retain their visible overlay.
 
 As with a typical add-in, the modal add-in should register for the `init` callback and will receive `envId` in the arguments. The `context` field for arguments will match the context object passed into the `showModal` call from the parent add-in.  Note that this is crossing iframes so the object has been serialized and deserialized.  It can be used for passing data but not functions.
 
