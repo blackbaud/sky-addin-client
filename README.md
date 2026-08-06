@@ -50,7 +50,7 @@ All add-ins must use this library in order to show in the host application. You 
 Your `init` function will be called with an arguments object that contains:
  - `envId` - The environment ID for the host page
  - `context` - Additional context of the host page, which will vary for different extension points.
- - `addinType` - Optional. Identifies the canonical pattern in which the host is displaying the add-in (one of `'action-button'`, `'box'`, `'button'`, `'dataset'`, `'flyout'`, `'generic'`, `'modal'`, `'page'`, `'tab'`, `'tile'`, or `'vertical-tab'`). Not every host populates this value, so it may be `undefined`; this library never assumes a default. Because each iframe re-establishes its own `init` handshake, a modal or flyout add-in receives its own `addinType` on that fresh handshake rather than inheriting the value seen by the add-in that launched it.
+ - `addinType` (Version 1.8+) - Identifies the host's display mode for the add-in (`'action-button'`, `'box'`, `'button'`, `'dataset'`, `'flyout'`, `'generic'`, `'modal'`, `'page'`, `'tab'`, `'tile'`, or `'vertical-tab'`). Useful when your add-in is used in multiple display modes.
  - `supportedEventTypes` - The supported event types that are handled by the host page.
  - `themeSettings` - The UX theme of the host page.
  - `ready` - A callback to inform the add-in client that the add-in is initialized and ready to be shown.
@@ -273,15 +273,14 @@ client.showModal({
 ##### Modal add-in
 The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY Add-in Client Library and make use of the `AddinClient`.
 
-The modal add-in can independently configure its document body and a compatible host's
-overlay through `modalConfig.style`:
+The modal add-in can independently configure its document body and a host's overlay through `modalConfig.style`:
 
 | Option | Behavior |
 |---|---|
-| `transparentBackground: true` | Makes the add-in document body transparent before `addin-ready`. |
+| `transparentBackground: true` | Makes the add-in document body transparent. |
 | `transparentBackground: false` or omitted | Does not make the body transparent. |
-| `hostOverlay: false` | Asks a compatible host to make its overlay background transparent while keeping the overlay element. |
-| `hostOverlay: true` or omitted | Asks a compatible host to retain its visible overlay. |
+| `hostOverlay: false` | Hides the host's modal overlay. |
+| `hostOverlay: true` or omitted | Host retain its modal visible overlay. |
 
 These options are independent and this library does not default them.
 
@@ -296,10 +295,6 @@ args.ready({
   }
 });
 ```
-
-Older hosts ignore `hostOverlay` and retain their visible overlay.
-
-As with a typical add-in, the modal add-in should register for the `init` callback and will receive `envId` in the arguments. The `context` field for arguments will match the context object passed into the `showModal` call from the parent add-in.  Note that this is crossing iframes so the object has been serialized and deserialized.  It can be used for passing data but not functions.  A compatible host reports `addinType: 'modal'` on this fresh `init` handshake, though the modal add-in should not assume it and should treat `addinType` as optional.
 
 ##### Closing the modal
 The modal add-in is responsible for triggering the close with the `closeModal` function on the client.  It is able to pass context information back to the parent add-in:
