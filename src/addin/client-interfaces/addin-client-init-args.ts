@@ -1,5 +1,6 @@
 import { AddinClientReadyArgs } from './addin-client-ready-args';
 import { AddinClientThemeSettings } from './addin-client-theme-settings';
+import { AddinType } from './addin-type';
 
 /**
  * Interface for contextual information that will be provided in the init callback.
@@ -17,9 +18,9 @@ export interface AddinClientInitArgs {
   context?: any;
 
   /**
-   * Identifies how the host is displaying this add-in.
+   * Identifies the canonical pattern in which the host displays the add-in.
    */
-  displayMode?: 'modal';
+  addinType?: AddinType;
 
   /**
    * Event types that are supported by the host page.

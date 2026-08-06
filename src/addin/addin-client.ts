@@ -585,8 +585,8 @@ export class AddinClient {
 
         // Pass key data to the add-in for it to initiailze.
         this.args.callbacks.init({
+          addinType: data.message.addinType,
           context: data.message.context,
-          displayMode: data.message.displayMode,
           envId: data.message.envId,
           ready: (args: AddinClientReadyArgs) => {
             this.applyModalStyle(args?.modalConfig?.style);

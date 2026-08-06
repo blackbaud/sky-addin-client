@@ -50,6 +50,7 @@ All add-ins must use this library in order to show in the host application. You 
 Your `init` function will be called with an arguments object that contains:
  - `envId` - The environment ID for the host page
  - `context` - Additional context of the host page, which will vary for different extension points.
+ - `addinType` - Optional. Identifies the canonical pattern in which the host is displaying the add-in (one of `'action-button'`, `'box'`, `'button'`, `'dataset'`, `'flyout'`, `'generic'`, `'modal'`, `'page'`, `'tab'`, `'tile'`, or `'vertical-tab'`). Not every host populates this value, so it may be `undefined`; this library never assumes a default. Because each iframe re-establishes its own `init` handshake, a modal or flyout add-in receives its own `addinType` on that fresh handshake rather than inheriting the value seen by the add-in that launched it.
  - `supportedEventTypes` - The supported event types that are handled by the host page.
  - `themeSettings` - The UX theme of the host page.
  - `ready` - A callback to inform the add-in client that the add-in is initialized and ready to be shown.
@@ -298,7 +299,7 @@ args.ready({
 
 Older hosts ignore `hostOverlay` and retain their visible overlay.
 
-As with a typical add-in, the modal add-in should register for the `init` callback and will receive `envId` in the arguments. The `context` field for arguments will match the context object passed into the `showModal` call from the parent add-in.  Note that this is crossing iframes so the object has been serialized and deserialized.  It can be used for passing data but not functions.
+As with a typical add-in, the modal add-in should register for the `init` callback and will receive `envId` in the arguments. The `context` field for arguments will match the context object passed into the `showModal` call from the parent add-in.  Note that this is crossing iframes so the object has been serialized and deserialized.  It can be used for passing data but not functions.  A compatible host reports `addinType: 'modal'` on this fresh `init` handshake, though the modal add-in should not assume it and should treat `addinType` as optional.
 
 ##### Closing the modal
 The modal add-in is responsible for triggering the close with the `closeModal` function on the client.  It is able to pass context information back to the parent add-in:

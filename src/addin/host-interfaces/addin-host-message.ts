@@ -1,4 +1,4 @@
-import { AddinClientThemeSettings } from '../client-interfaces';
+import { AddinClientThemeSettings, AddinType } from '../client-interfaces';
 
 /**
  * Interface for the actual message data embedded in an AddinHostMessageEventData.
@@ -22,9 +22,9 @@ export interface AddinHostMessage {
   context?: any;
 
   /**
-   * Identifies how the host is displaying this add-in.
+   * Identifies the canonical pattern in which the host displays the add-in.
    */
-  displayMode?: 'modal';
+  addinType?: AddinType;
 
   /**
    * The environment id of the host page.
