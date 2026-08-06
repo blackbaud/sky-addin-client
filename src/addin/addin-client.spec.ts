@@ -191,8 +191,8 @@ describe('AddinClient ', () => {
 
           const msg: AddinHostMessageEventData = {
             message: {
+              addinType: 'tile',
               context: 'my_context',
-              displayMode: 'modal',
               envId: 'my_envid',
               supportedEventTypes: ['update-event'],
               themeSettings: {
@@ -209,8 +209,8 @@ describe('AddinClient ', () => {
 
           client.destroy();
 
+          expect(initArgs.addinType).toBe('tile');
           expect(initArgs.context).toBe('my_context');
-          expect(initArgs.displayMode).toBe('modal');
           expect(initArgs.envId).toBe('my_envid');
           expect(initArgs.supportedEventTypes).toEqual(['update-event']);
           expect(initArgs.themeSettings).toEqual({
@@ -218,6 +218,34 @@ describe('AddinClient ', () => {
             theme: 'default',
             skyThemeSettings: '{"theme":{"name":"modern","supportedModes":[{"name":"default","isPreset":true}],"isPreset":true},"mode":{"name":"light","isPreset":true}}'
           });
+        });
+
+      it('should leave "addinType" undefined when the host does not provide it.',
+        () => {
+          let initArgs: any;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                initArgs = args;
+              }
+            }
+          });
+
+          const msg: AddinHostMessageEventData = {
+            message: {
+              context: 'my_context',
+              envId: 'my_envid'
+            },
+            messageType: 'host-ready',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+
+          client.destroy();
+
+          expect(initArgs.addinType).toBeUndefined();
         });
 
     });
