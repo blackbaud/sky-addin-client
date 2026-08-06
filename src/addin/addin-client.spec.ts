@@ -14,6 +14,8 @@ import { AddinToastStyle } from './client-interfaces/addin-toast-style';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
 const TEST_HOST_ORIGIN = 'https://host.nxt.blackbaud.com';
+const TRANSPARENT_BACKGROUND_CLASS = 'bb-sky-addin-client-transparent-background';
+const TRANSPARENT_BACKGROUND_STYLE_ID = 'bb-sky-addin-client-transparent-background-style';
 
 function postMessageFromHost(msg: AddinHostMessageEventData, origin?: string) {
   if (!origin) { origin = TEST_HOST_ORIGIN; }
@@ -189,6 +191,7 @@ describe('AddinClient ', () => {
 
           const msg: AddinHostMessageEventData = {
             message: {
+              addinType: 'tile',
               context: 'my_context',
               envId: 'my_envid',
               supportedEventTypes: ['update-event'],
@@ -206,6 +209,7 @@ describe('AddinClient ', () => {
 
           client.destroy();
 
+          expect(initArgs.addinType).toBe('tile');
           expect(initArgs.context).toBe('my_context');
           expect(initArgs.envId).toBe('my_envid');
           expect(initArgs.supportedEventTypes).toEqual(['update-event']);
@@ -214,6 +218,34 @@ describe('AddinClient ', () => {
             theme: 'default',
             skyThemeSettings: '{"theme":{"name":"modern","supportedModes":[{"name":"default","isPreset":true}],"isPreset":true},"mode":{"name":"light","isPreset":true}}'
           });
+        });
+
+      it('should leave "addinType" undefined when the host does not provide it.',
+        () => {
+          let initArgs: any;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                initArgs = args;
+              }
+            }
+          });
+
+          const msg: AddinHostMessageEventData = {
+            message: {
+              context: 'my_context',
+              envId: 'my_envid'
+            },
+            messageType: 'host-ready',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+
+          client.destroy();
+
+          expect(initArgs.addinType).toBeUndefined();
         });
 
     });
@@ -758,6 +790,413 @@ describe('AddinClient ', () => {
         expect(postedMessage.messageType).toBe('addin-ready');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
       });
+
+    it('should pass hostOverlay: false through to the host in the "addin-ready" message.',
+      () => {
+        const readyArgs: AddinClientReadyArgs = {
+          modalConfig: {
+            style: {
+              hostOverlay: false
+            }
+          }
+        };
+        let postedMessage: any;
+        let postedOrigin: string;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready(readyArgs);
+            }
+          }
+        });
+
+        const msg: AddinHostMessageEventData = {
+          message: {},
+          messageType: 'host-ready',
+          source: 'bb-addin-host'
+        };
+
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin as string;
+        });
+
+        postMessageFromHost(msg);
+
+        client.destroy();
+
+        expect(postedMessage.messageType).toBe('addin-ready');
+        expect(postedMessage.message).toEqual(readyArgs);
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+      });
+
+    describe('modal body transparency', () => {
+      const opaqueBackground = 'rgb(1, 2, 3)';
+      let bodyClassesAddedByTest: string[];
+      let client: AddinClient;
+      let originalBodyBackgroundColor: string;
+      let originalBodyColor: string;
+      let styleElementsAddedByTest: HTMLStyleElement[];
+
+      function addBodyClassForTest(className: string) {
+        if (!document.body.classList.contains(className)) {
+          document.body.classList.add(className);
+          bodyClassesAddedByTest.push(className);
+        }
+      }
+
+      beforeEach(() => {
+        bodyClassesAddedByTest = [];
+        client = undefined;
+        originalBodyBackgroundColor = document.body.style.backgroundColor;
+        originalBodyColor = document.body.style.color;
+        styleElementsAddedByTest = [];
+        document.body.style.backgroundColor = opaqueBackground;
+      });
+
+      afterEach(() => {
+        if (client) {
+          client.destroy();
+        }
+
+        styleElementsAddedByTest.forEach((style) => style.parentNode?.removeChild(style));
+
+        bodyClassesAddedByTest.forEach((className) => {
+          document.body.classList.remove(className);
+        });
+        document.body.style.backgroundColor = originalBodyBackgroundColor;
+        document.body.style.color = originalBodyColor;
+      });
+
+      it('should preserve the body background when no modalConfig is provided.', () => {
+        const initialBackground = window.getComputedStyle(document.body).backgroundColor;
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready({});
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+        expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+        expect(window.getComputedStyle(document.body).backgroundColor).toBe(initialBackground);
+      });
+
+      it('should preserve the body background when style is an empty object.', () => {
+        const initialBackground = window.getComputedStyle(document.body).backgroundColor;
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready({
+                modalConfig: {
+                  style: {}
+                }
+              });
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+        expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+        expect(window.getComputedStyle(document.body).backgroundColor).toBe(initialBackground);
+      });
+
+      it('should preserve the body background when transparentBackground is false.', () => {
+        const initialBackground = window.getComputedStyle(document.body).backgroundColor;
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready({
+                modalConfig: {
+                  style: { transparentBackground: false }
+                }
+              });
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+        expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+        expect(window.getComputedStyle(document.body).backgroundColor).toBe(initialBackground);
+      });
+
+      it('should preserve the body background when only hostOverlay is false.', () => {
+        const initialBackground = window.getComputedStyle(document.body).backgroundColor;
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready({
+                modalConfig: {
+                  style: { hostOverlay: false }
+                }
+              });
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+        expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+        expect(window.getComputedStyle(document.body).backgroundColor).toBe(initialBackground);
+      });
+
+      it('should make the body transparent before checking height and posting "addin-ready" when transparentBackground is true.',
+        () => {
+          const transparentBackground = true;
+          let backgroundAtHeightCheck: string;
+          let backgroundAtAddinReady: string;
+
+          client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                args.ready({
+                  modalConfig: {
+                    style: { transparentBackground }
+                  }
+                });
+              }
+            }
+          });
+
+          const clientPrivateApi = client as unknown as {
+            checkForHeightChangesOfAddinContent(): void;
+          };
+          const heightCheckSpy = spyOn(
+            clientPrivateApi,
+            'checkForHeightChangesOfAddinContent'
+          ).and.callFake(() => {
+            backgroundAtHeightCheck = window.getComputedStyle(document.body).backgroundColor;
+          });
+
+          spyOn(window.parent, 'postMessage').and.callFake((message) => {
+            if (message.messageType === 'addin-ready') {
+              backgroundAtAddinReady = window.getComputedStyle(document.body).backgroundColor;
+            }
+          });
+
+          initializeHost();
+
+          expect(heightCheckSpy).toHaveBeenCalled();
+          expect(backgroundAtHeightCheck).toBe('rgba(0, 0, 0, 0)');
+          expect(backgroundAtAddinReady).toBe('rgba(0, 0, 0, 0)');
+          expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(true);
+          expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).not.toBeNull();
+        });
+
+      it('should preserve an unrelated style when the stable transparent style ID is occupied.', () => {
+        const unrelatedStyle = document.createElement('style');
+        unrelatedStyle.id = TRANSPARENT_BACKGROUND_STYLE_ID;
+        unrelatedStyle.textContent = '.unrelated-style { color: rgb(4, 5, 6); }';
+        document.head.appendChild(unrelatedStyle);
+        styleElementsAddedByTest.push(unrelatedStyle);
+        const unrelatedStyleMarkup = unrelatedStyle.outerHTML;
+        const styleElementsBeforeClient = Array.from(document.head.querySelectorAll('style'));
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready({
+                modalConfig: {
+                  style: { transparentBackground: true }
+                }
+              });
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+
+        const clientStyle = Array.from(document.head.querySelectorAll('style'))
+          .find((style) => styleElementsBeforeClient.indexOf(style) === -1);
+
+        expect(document.querySelectorAll(`[id="${TRANSPARENT_BACKGROUND_STYLE_ID}"]`).length)
+          .toBe(1);
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(true);
+        expect(window.getComputedStyle(document.body).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+
+        client.destroy();
+        client = undefined;
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+        expect(clientStyle?.parentNode).toBeNull();
+        expect(unrelatedStyle.parentNode).toBe(document.head);
+        expect(unrelatedStyle.outerHTML).toBe(unrelatedStyleMarkup);
+      });
+
+      it('should preserve a transparent background class that predates the client.', () => {
+        addBodyClassForTest(TRANSPARENT_BACKGROUND_CLASS);
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready({
+                modalConfig: {
+                  style: { transparentBackground: true }
+                }
+              });
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+        client.destroy();
+        client = undefined;
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(true);
+        expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+      });
+
+      it('should reuse the client-owned style when ready is called repeatedly.', () => {
+        let ready: (args: AddinClientReadyArgs) => void;
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              ready = args.ready;
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+        ready({
+          modalConfig: {
+            style: { transparentBackground: true }
+          }
+        });
+        ready({
+          modalConfig: {
+            style: { transparentBackground: true }
+          }
+        });
+
+        expect(document.querySelectorAll(`#${TRANSPARENT_BACKGROUND_STYLE_ID}`).length).toBe(1);
+      });
+
+      it('should remove stale client-owned transparency when a later ready call preserves the background.',
+        () => {
+          let ready: (args: AddinClientReadyArgs) => void;
+
+          client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                ready = args.ready;
+              }
+            }
+          });
+
+          spyOn(window.parent, 'postMessage').and.stub();
+
+          initializeHost();
+          ready({
+            modalConfig: {
+              style: { transparentBackground: true }
+            }
+          });
+
+          expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(true);
+
+          ready({
+            modalConfig: {
+              style: { transparentBackground: false }
+            }
+          });
+
+          expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+          expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+          expect(window.getComputedStyle(document.body).backgroundColor).toBe(opaqueBackground);
+        });
+
+      it('should remove stale client-owned transparency when a later ready call omits the background mode.',
+        () => {
+          let ready: (args: AddinClientReadyArgs) => void;
+
+          client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                ready = args.ready;
+              }
+            }
+          });
+
+          spyOn(window.parent, 'postMessage').and.stub();
+
+          initializeHost();
+          ready({
+            modalConfig: {
+              style: { transparentBackground: true }
+            }
+          });
+
+          expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(true);
+
+          ready({});
+
+          expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+          expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+          expect(window.getComputedStyle(document.body).backgroundColor).toBe(opaqueBackground);
+        });
+
+      it('should remove only client-owned body state on destroy.', () => {
+        const unrelatedClass = 'unrelated-body-class';
+        const unrelatedColor = 'rgb(4, 5, 6)';
+        addBodyClassForTest(unrelatedClass);
+        document.body.style.color = unrelatedColor;
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready({
+                modalConfig: {
+                  style: { transparentBackground: true }
+                }
+              });
+            }
+          }
+        });
+
+        spyOn(window.parent, 'postMessage').and.stub();
+
+        initializeHost();
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(true);
+        expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).not.toBeNull();
+
+        client.destroy();
+
+        expect(document.body.classList.contains(TRANSPARENT_BACKGROUND_CLASS)).toBe(false);
+        expect(document.getElementById(TRANSPARENT_BACKGROUND_STYLE_ID)).toBeNull();
+        expect(document.body.classList.contains(unrelatedClass)).toBe(true);
+        expect(document.body.style.backgroundColor).toBe(opaqueBackground);
+        expect(document.body.style.color).toBe(unrelatedColor);
+      });
+    });
 
   });
 

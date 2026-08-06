@@ -28,3 +28,4 @@ export * from './addin-tab-summary-style';
 export * from './addin-tile-config';
 export * from './addin-tile-summary-style';
 export * from './addin-toast-style';
+export * from './addin-type';
