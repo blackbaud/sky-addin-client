@@ -278,7 +278,7 @@ The modal add-in can independently configure its document body and a host's over
 | Option | Behavior |
 |---|---|
 | `transparentBackground: true` | Makes the add-in document body transparent. |
-| `transparentBackground: false` or omitted | Does not make the body transparent. |
+| `transparentBackground: false` or omitted | Retains add-in's body styling. |
 | `hostOverlay: false` | Hides the host's modal overlay. |
 | `hostOverlay: true` or omitted | Host retain its modal visible overlay. |
 
