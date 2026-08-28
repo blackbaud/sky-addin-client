@@ -1,3 +1,6 @@
+# 1.7.4 (2026-08-21)
+- Updated `allowedOrigins` to support MCP Apps widgets hosted on the SKY CDN (`sky.blackbaudcdn.net`).
+
 # 1.7.3 (2026-03-24)
 - Updated `allowedOrigins` to support Luminate Online on T60
 

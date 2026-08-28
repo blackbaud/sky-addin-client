@@ -79,7 +79,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(20);
+      expect((<any>client).allowedOrigins.length).toBe(21);
     });
 
     it ('should initialize AddinClient with additional allowedOrigins', () => {
@@ -97,7 +97,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(23);
+      expect((<any>client).allowedOrigins.length).toBe(24);
     });
 
     it ('additional allowedOrigins - removing duplicates', () => {
@@ -116,7 +116,7 @@ describe('AddinClient ', () => {
       });
       client.destroy();
 
-      expect((<any>client).allowedOrigins.length).toBe(21);
+      expect((<any>client).allowedOrigins.length).toBe(22);
     });
 
   });
@@ -1950,7 +1950,8 @@ describe('AddinClient ', () => {
       'https://test-site.blackbaud-test.com',
       'https://view-my.test_site.blackbaud-test.com',
       'https://secure01.lo.blackbaud-test.com',
-      'https://test.justgiving.com'
+      'https://test.justgiving.com',
+      'https://sky.blackbaudcdn.net'
     ].forEach((url) => {
       it(`should not warn because ${url} is allowed.`,
         () => {

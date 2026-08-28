@@ -38,7 +38,8 @@ const allowedOrigins = [
   /^https\:\/\/[\w\-\.]+\.myschoolautomation\.com$/,
   /^https\:\/\/[\w\-\.]+\.myschooldemo\.com$/,
   /^https\:\/\/[\w\-\.]+\.myschooltraining\.com$/,
-  /^https\:\/\/[\w\-\.]+\.justgiving\.com$/
+  /^https\:\/\/[\w\-\.]+\.justgiving\.com$/,
+  /^https\:\/\/sky\.blackbaudcdn\.net$/
 ];
 
 /**
