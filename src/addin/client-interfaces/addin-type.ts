@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Identifies the canonical pattern in which the host displays an add-in.
  */
 export type AddinType =
