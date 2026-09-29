@@ -1,7 +1,6 @@
-# 1.8.0
-
+# 1.8.0 (2026-09-29)
 - Added canonical add-in type context to initialization arguments.
-- Added independent modal body-transparency and host-overlay style options.
+- Added independent modal document-transparency and host-overlay style options.
 
 # 1.7.4 (2026-08-21)
 - Updated `allowedOrigins` to support MCP Apps widgets hosted on the SKY CDN (`sky.blackbaudcdn.net`).

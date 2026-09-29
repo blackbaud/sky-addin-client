@@ -19,6 +19,7 @@ export interface AddinClientInitArgs {
 
   /**
    * Identifies the canonical pattern in which the host displays the add-in.
+   * Undefined when the host does not provide it or provides a type this client does not recognize.
    */
   addinType?: AddinType;
 

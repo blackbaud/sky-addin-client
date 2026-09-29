@@ -50,7 +50,7 @@ All add-ins must use this library in order to show in the host application. You 
 Your `init` function will be called with an arguments object that contains:
  - `envId` - The environment ID for the host page
  - `context` - Additional context of the host page, which will vary for different extension points.
- - `addinType` (Version 1.8+) - Identifies the host's display mode for the add-in (`'action-button'`, `'box'`, `'button'`, `'dataset'`, `'flyout'`, `'generic'`, `'modal'`, `'page'`, `'tab'`, `'tile'`, or `'vertical-tab'`). Useful when your add-in is used in multiple display modes.
+ - `addinType` (Version 1.8+) - Identifies the host's display mode for the add-in (`'action-button'`, `'box'`, `'button'`, `'dataset'`, `'flyout'`, `'generic'`, `'modal'`, `'page'`, `'tab'`, `'tile'`, or `'vertical-tab'`). Useful when your add-in is used in multiple display modes. Only compatible hosts provide this value, so it is `undefined` when the host does not provide it or provides a type this version of the library does not recognize.
  - `supportedEventTypes` - The supported event types that are handled by the host page.
  - `themeSettings` - The UX theme of the host page.
  - `ready` - A callback to inform the add-in client that the add-in is initialized and ready to be shown.
@@ -273,16 +273,18 @@ client.showModal({
 ##### Modal add-in
 The host page will launch a full screen iframe for the URL provided, and load it as an add-in the same way it does for other types of add-ins.  The modal page must also pull in the SKY Add-in Client Library and make use of the `AddinClient`.
 
-The modal add-in can independently configure its document body and a host's overlay through `modalConfig.style`:
+The modal add-in will be responsible for rendering the modal element itself (including any chrome around the modal content).  To create a native modal experience, the add-in may make its document background transparent and launch a SKY UX modal within its full screen iframe.
+
+Starting in version 1.8, the modal add-in can independently configure its document background and the host's overlay through `modalConfig.style`:
 
 | Option | Behavior |
 |---|---|
-| `transparentBackground: true` | Makes the add-in document body transparent. |
-| `transparentBackground: false` or omitted | Retains add-in's body styling. |
-| `hostOverlay: false` | Asks a compatible host to make its overlay transparent. |
-| `hostOverlay: true` or omitted | Host retains its modal visible overlay. |
+| `transparentBackground: true` | Makes the add-in document's `html` and `body` backgrounds transparent. |
+| `transparentBackground: false` or omitted | Preserves the add-in's document background. |
+| `hostOverlay: false` | Asks the host to make its overlay transparent. Hosts that do not support this option ignore it. |
+| `hostOverlay: true` or omitted | Preserves the host's visible overlay. |
 
-These options are independent and this library does not default them.
+These options are independent and this library does not default them.  The library applies `transparentBackground` as inline `!important` styles, and restores the previous inline styles when a later `ready` call omits it or the client is destroyed.
 
 ```js
 args.ready({

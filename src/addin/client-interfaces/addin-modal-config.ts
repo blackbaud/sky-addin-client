@@ -4,7 +4,7 @@
 export interface AddinModalStyle {
 
   /**
-   * When true, makes the add-in document body transparent.
+   * When true, makes the add-in document's html and body backgrounds transparent.
    */
   transparentBackground?: boolean;
 

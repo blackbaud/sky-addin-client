@@ -13,6 +13,7 @@ import { AddinClientShowModalArgs } from './client-interfaces/addin-client-show-
 import { AddinClientShowModalResult } from './client-interfaces/addin-client-show-modal-result';
 import { AddinClientShowToastArgs } from './client-interfaces/addin-client-show-toast-args';
 import { AddinModalConfig } from './client-interfaces/addin-modal-config';
+import { AddinType } from './client-interfaces/addin-type';
 import { AddinHostMessage } from './host-interfaces/addin-host-message';
 import { AddinHostMessageEventData } from './host-interfaces/addin-host-message-event-data';
 
@@ -42,6 +43,44 @@ const allowedOrigins = [
   /^https\:\/\/[\w\-\.]+\.justgiving\.com$/,
   /^https\:\/\/sky\.blackbaudcdn\.net$/
 ];
+
+/**
+ * Add-in types recognized by this client.  Typed as a record so that every
+ * AddinType must be listed here.
+ */
+const knownAddinTypes: Record<AddinType, true> = {
+  'action-button': true,
+  'box': true,
+  'button': true,
+  'dataset': true,
+  'flyout': true,
+  'generic': true,
+  'modal': true,
+  'page': true,
+  'tab': true,
+  'tile': true,
+  'vertical-tab': true
+};
+
+/**
+ * Inline declarations that make an element's background transparent.  Inline styles
+ * are used rather than a style element so they are not blocked by a Content Security Policy.
+ */
+const transparentBackgroundDeclarations = [
+  { property: 'background-color', value: 'transparent' },
+  { property: 'background-image', value: 'none' }
+];
+
+/**
+ * An inline background declaration replaced by the client, and the value to restore.
+ */
+interface ReplacedBackgroundDeclaration {
+  element: HTMLElement;
+  property: string;
+  transparentValue: string;
+  value: string;
+  priority: string;
+}
 
 /**
  * Callback function to execute when an add-in event occurs.
@@ -146,25 +185,19 @@ export class AddinClient {
   private supportedEventTypes: string[] = [];
 
   /**
-   * Class added to the body when the client owns its transparent background state.
+   * Indicates whether the client has been destroyed.
    */
-  private readonly transparentBackgroundClass = 'bb-sky-addin-client-transparent-background';
+  private destroyed = false;
 
   /**
-   * Preferred ID for the client-owned transparent background style.
+   * Inline background declarations replaced by this client to make the document transparent.
    */
-  private readonly transparentBackgroundStyleId =
-    'bb-sky-addin-client-transparent-background-style';
+  private replacedBackgroundDeclarations: ReplacedBackgroundDeclaration[] = [];
 
   /**
-   * Indicates whether this client added the transparent background class.
+   * Handler waiting for the body to be parsed before making it transparent.
    */
-  private ownsTransparentBackgroundClass = false;
-
-  /**
-   * The transparent background style element created by this client.
-   */
-  private transparentBackgroundStyleElement: HTMLStyleElement | undefined;
+  private bodyReadyHandler: (() => void) | undefined;
 
   /**
    * Collection of regexs for our whitelist of host origins.
@@ -204,6 +237,7 @@ export class AddinClient {
     }
 
     this.cleanupTransparentBackground();
+    this.destroyed = true;
   }
 
   /**
@@ -464,7 +498,7 @@ export class AddinClient {
   }
 
   /**
-   * Applies the client-owned document body transparency for a modal add-in.
+   * Applies the client-owned document transparency for a modal add-in.
    * @param style The modal style from the ready args.
    */
   private applyModalStyle(style: AddinModalConfig['style']) {
@@ -473,39 +507,85 @@ export class AddinClient {
       return;
     }
 
-    if (!document.body.classList.contains(this.transparentBackgroundClass)) {
-      document.body.classList.add(this.transparentBackgroundClass);
-      this.ownsTransparentBackgroundClass = true;
-    }
+    this.makeBackgroundTransparent(document.documentElement);
 
-    if (!this.transparentBackgroundStyleElement?.parentNode) {
-      const styleElement = document.createElement('style');
-      if (!document.getElementById(this.transparentBackgroundStyleId)) {
-        styleElement.id = this.transparentBackgroundStyleId;
-      }
-      styleElement.textContent =
-        `body.${this.transparentBackgroundClass} ` +
-        '{ background: transparent !important; }';
-      document.head.appendChild(styleElement);
-      this.transparentBackgroundStyleElement = styleElement;
+    if (document.body) {
+      this.makeBackgroundTransparent(document.body);
+    } else if (!this.bodyReadyHandler) {
+      // The body does not exist yet if ready is called while the document is still parsing.
+      this.bodyReadyHandler = () => {
+        this.bodyReadyHandler = undefined;
+        if (document.body) {
+          this.makeBackgroundTransparent(document.body);
+        }
+      };
+      document.addEventListener('DOMContentLoaded', this.bodyReadyHandler, { once: true });
     }
   }
 
   /**
-   * Removes document body background state owned by this client.
+   * Makes an element's background transparent with inline declarations, recording
+   * the declarations it replaces so they can be restored.
+   * @param element The element to make transparent.
+   */
+  private makeBackgroundTransparent(element: HTMLElement) {
+    for (const declaration of transparentBackgroundDeclarations) {
+      const property = declaration.property;
+      const value = element.style.getPropertyValue(property);
+      const priority = element.style.getPropertyPriority(property);
+
+      // Leave an existing transparent declaration alone, whether it was set by this client
+      // on an earlier ready call or by the add-in itself.
+      if (value !== declaration.value || priority !== 'important') {
+        this.replacedBackgroundDeclarations.push({
+          element,
+          priority,
+          property,
+          transparentValue: declaration.value,
+          value
+        });
+        element.style.setProperty(property, declaration.value, 'important');
+      }
+    }
+  }
+
+  /**
+   * Restores document background declarations replaced by this client.
    */
   private cleanupTransparentBackground() {
-    if (this.ownsTransparentBackgroundClass) {
-      document.body.classList.remove(this.transparentBackgroundClass);
-      this.ownsTransparentBackgroundClass = false;
+    if (this.bodyReadyHandler) {
+      document.removeEventListener('DOMContentLoaded', this.bodyReadyHandler);
+      this.bodyReadyHandler = undefined;
     }
 
-    if (this.transparentBackgroundStyleElement?.parentNode) {
-      this.transparentBackgroundStyleElement.parentNode.removeChild(
-        this.transparentBackgroundStyleElement
-      );
+    for (const replaced of this.replacedBackgroundDeclarations) {
+      const style = replaced.element.style;
+
+      // Don't restore over a declaration the add-in has changed since this client set it.
+      if (
+        style.getPropertyValue(replaced.property) === replaced.transparentValue &&
+        style.getPropertyPriority(replaced.property) === 'important'
+      ) {
+        if (replaced.value) {
+          style.setProperty(replaced.property, replaced.value, replaced.priority);
+        } else {
+          style.removeProperty(replaced.property);
+        }
+      }
     }
-    this.transparentBackgroundStyleElement = undefined;
+
+    this.replacedBackgroundDeclarations = [];
+  }
+
+  /**
+   * Returns the add-in type provided by the host if this client recognizes it.
+   * @param addinType The add-in type provided by the host.
+   * @returns The add-in type, or undefined if it is missing or unrecognized.
+   */
+  private getKnownAddinType(addinType: string | undefined): AddinType | undefined {
+    if (typeof addinType === 'string' && knownAddinTypes.hasOwnProperty(addinType)) {
+      return addinType as AddinType;
+    }
   }
 
   /**
@@ -586,11 +666,13 @@ export class AddinClient {
 
         // Pass key data to the add-in for it to initiailze.
         this.args.callbacks.init({
-          addinType: data.message.addinType,
+          addinType: this.getKnownAddinType(data.message.addinType),
           context: data.message.context,
           envId: data.message.envId,
           ready: (args: AddinClientReadyArgs) => {
-            this.applyModalStyle(args?.modalConfig?.style);
+            if (!this.destroyed) {
+              this.applyModalStyle(args?.modalConfig?.style);
+            }
 
             // Do an immediate height check since the add-in may render something
             // due to the context provided.  No need to wait a full second to reflect.
