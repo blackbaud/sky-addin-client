@@ -50,7 +50,7 @@ All add-ins must use this library in order to show in the host application. You 
 Your `init` function will be called with an arguments object that contains:
  - `envId` - The environment ID for the host page
  - `context` - Additional context of the host page, which will vary for different extension points.
- - `addinType` (Version 1.8+) - Identifies the host's display mode for the add-in (`'action-button'`, `'box'`, `'button'`, `'dataset'`, `'flyout'`, `'generic'`, `'modal'`, `'page'`, `'tab'`, `'tile'`, or `'vertical-tab'`). Useful when your add-in is used in multiple display modes. Only compatible hosts provide this value, so it is `undefined` when the host does not provide it or provides a type this version of the library does not recognize.
+ - `addinType` (Version 1.8+) - Identifies the host's display mode for the add-in (`'action-button'`, `'box'`, `'button'`, `'dataset'`, `'flyout'`, `'generic'`, `'modal'`, `'page'`, `'tab'`, `'tile'`, or `'vertical-tab-form'`). Useful when your add-in is used in multiple display modes. Only compatible hosts provide this value, so it is `undefined` when the host does not provide it or provides a type this version of the library does not recognize.
  - `supportedEventTypes` - The supported event types that are handled by the host page.
  - `themeSettings` - The UX theme of the host page.
  - `ready` - A callback to inform the add-in client that the add-in is initialized and ready to be shown.

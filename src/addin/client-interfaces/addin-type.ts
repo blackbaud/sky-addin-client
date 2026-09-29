@@ -12,4 +12,4 @@ export type AddinType =
   'page' |
   'tab' |
   'tile' |
-  'vertical-tab';
+  'vertical-tab-form';

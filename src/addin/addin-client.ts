@@ -59,7 +59,7 @@ const knownAddinTypes: Record<AddinType, true> = {
   'page': true,
   'tab': true,
   'tile': true,
-  'vertical-tab': true
+  'vertical-tab-form': true
 };
 
 /**

@@ -276,6 +276,33 @@ describe('AddinClient ', () => {
           expect(initArgs.context).toBe('my_context');
         });
 
+      it('should pass the "vertical-tab-form" add-in type.',
+        () => {
+          let initArgs: any;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                initArgs = args;
+              }
+            }
+          });
+
+          const msg: AddinHostMessageEventData = {
+            message: {
+              addinType: 'vertical-tab-form'
+            },
+            messageType: 'host-ready',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+
+          client.destroy();
+
+          expect(initArgs.addinType).toBe('vertical-tab-form');
+        });
+
     });
 
     it('should disregard host messages from the wrong origin.',
