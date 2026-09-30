@@ -189,6 +189,7 @@ describe('AddinClient ', () => {
 
           const msg: AddinHostMessageEventData = {
             message: {
+              addinType: 'tile',
               context: 'my_context',
               envId: 'my_envid',
               supportedEventTypes: ['update-event'],
@@ -206,6 +207,7 @@ describe('AddinClient ', () => {
 
           client.destroy();
 
+          expect(initArgs.addinType).toBe('tile');
           expect(initArgs.context).toBe('my_context');
           expect(initArgs.envId).toBe('my_envid');
           expect(initArgs.supportedEventTypes).toEqual(['update-event']);
@@ -214,6 +216,91 @@ describe('AddinClient ', () => {
             theme: 'default',
             skyThemeSettings: '{"theme":{"name":"modern","supportedModes":[{"name":"default","isPreset":true}],"isPreset":true},"mode":{"name":"light","isPreset":true}}'
           });
+        });
+
+      it('should leave "addinType" undefined when the host does not provide it.',
+        () => {
+          let initArgs: any;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                initArgs = args;
+              }
+            }
+          });
+
+          const msg: AddinHostMessageEventData = {
+            message: {
+              context: 'my_context',
+              envId: 'my_envid'
+            },
+            messageType: 'host-ready',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+
+          client.destroy();
+
+          expect(initArgs.addinType).toBeUndefined();
+        });
+
+      it('should leave "addinType" undefined when the host provides an unrecognized type.',
+        () => {
+          let initArgs: any;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                initArgs = args;
+              }
+            }
+          });
+
+          const msg: AddinHostMessageEventData = {
+            message: {
+              addinType: 'future-type',
+              context: 'my_context',
+              envId: 'my_envid'
+            },
+            messageType: 'host-ready',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+
+          client.destroy();
+
+          expect(initArgs.addinType).toBeUndefined();
+          expect(initArgs.context).toBe('my_context');
+        });
+
+      it('should pass the "vertical-tab-form" add-in type.',
+        () => {
+          let initArgs: any;
+
+          const client = new AddinClient({
+            callbacks: {
+              init: (args: AddinClientInitArgs) => {
+                initArgs = args;
+              }
+            }
+          });
+
+          const msg: AddinHostMessageEventData = {
+            message: {
+              addinType: 'vertical-tab-form'
+            },
+            messageType: 'host-ready',
+            source: 'bb-addin-host'
+          };
+
+          postMessageFromHost(msg);
+
+          client.destroy();
+
+          expect(initArgs.addinType).toBe('vertical-tab-form');
         });
 
     });
@@ -758,6 +845,337 @@ describe('AddinClient ', () => {
         expect(postedMessage.messageType).toBe('addin-ready');
         expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
       });
+
+    it('should pass hostOverlay: false through to the host in the "addin-ready" message.',
+      () => {
+        const readyArgs: AddinClientReadyArgs = {
+          modalConfig: {
+            style: {
+              hostOverlay: false
+            }
+          }
+        };
+        let postedMessage: any;
+        let postedOrigin: string;
+
+        const client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              args.ready(readyArgs);
+            }
+          }
+        });
+
+        const msg: AddinHostMessageEventData = {
+          message: {},
+          messageType: 'host-ready',
+          source: 'bb-addin-host'
+        };
+
+        spyOn(window.parent, 'postMessage').and.callFake((message, targetOrigin) => {
+          postedMessage = message;
+          postedOrigin = targetOrigin as string;
+        });
+
+        postMessageFromHost(msg);
+
+        client.destroy();
+
+        expect(postedMessage.messageType).toBe('addin-ready');
+        expect(postedMessage.message).toEqual(readyArgs);
+        expect(postedOrigin).toBe(TEST_HOST_ORIGIN);
+      });
+
+    describe('modal document transparency', () => {
+      const opaqueBackground = 'rgb(1, 2, 3)';
+      const transparentReadyArgs: AddinClientReadyArgs = {
+        modalConfig: {
+          style: { transparentBackground: true }
+        }
+      };
+      let body: HTMLElement;
+      let client: AddinClient;
+      let originalBodyStyle: string | null;
+      let originalHtmlStyle: string | null;
+      let postMessageSpy: jasmine.Spy;
+
+      function initializeClient(): (args: AddinClientReadyArgs) => void {
+        let ready: (args: AddinClientReadyArgs) => void;
+
+        client = new AddinClient({
+          callbacks: {
+            init: (args: AddinClientInitArgs) => {
+              ready = args.ready;
+            }
+          }
+        });
+
+        initializeHost();
+
+        return ready;
+      }
+
+      function restoreStyleAttribute(element: HTMLElement, style: string | null) {
+        if (style === null) {
+          element.removeAttribute('style');
+        } else {
+          element.setAttribute('style', style);
+        }
+      }
+
+      function expectOpaque(element: HTMLElement) {
+        expect(element.style.backgroundColor).toBe(opaqueBackground);
+        expect(element.style.getPropertyPriority('background-color')).toBe('');
+        expect(element.style.backgroundImage).toBe('');
+      }
+
+      function expectTransparent(element: HTMLElement) {
+        expect(window.getComputedStyle(element).backgroundColor).toBe('rgba(0, 0, 0, 0)');
+        expect(element.style.getPropertyPriority('background-color')).toBe('important');
+        expect(element.style.backgroundImage).toBe('none');
+        expect(element.style.getPropertyPriority('background-image')).toBe('important');
+      }
+
+      beforeEach(() => {
+        // Tests may replace the document.body getter, so keep a reference to the real body.
+        body = document.body;
+        client = undefined;
+        originalBodyStyle = document.body.getAttribute('style');
+        originalHtmlStyle = document.documentElement.getAttribute('style');
+        document.body.style.backgroundColor = opaqueBackground;
+        document.documentElement.style.backgroundColor = opaqueBackground;
+        postMessageSpy = spyOn(window.parent, 'postMessage').and.stub();
+      });
+
+      afterEach(() => {
+        if (client) {
+          client.destroy();
+        }
+
+        restoreStyleAttribute(body, originalBodyStyle);
+        restoreStyleAttribute(document.documentElement, originalHtmlStyle);
+      });
+
+      const preservedCases: { description: string, readyArgs: AddinClientReadyArgs }[] = [
+        {
+          description: 'ready is called without arguments',
+          readyArgs: undefined
+        },
+        {
+          description: 'no modalConfig is provided',
+          readyArgs: {}
+        },
+        {
+          description: 'style is an empty object',
+          readyArgs: { modalConfig: { style: {} } }
+        },
+        {
+          description: 'transparentBackground is false',
+          readyArgs: { modalConfig: { style: { transparentBackground: false } } }
+        },
+        {
+          description: 'only hostOverlay is false',
+          readyArgs: { modalConfig: { style: { hostOverlay: false } } }
+        }
+      ];
+
+      preservedCases.forEach(({ description, readyArgs }) => {
+        it(`should preserve the document background when ${description}.`, () => {
+          const ready = initializeClient();
+
+          ready(readyArgs);
+
+          expectOpaque(document.body);
+          expectOpaque(document.documentElement);
+        });
+      });
+
+      it('should make the document transparent before checking height and posting "addin-ready" when transparentBackground is true.',
+        () => {
+          let backgroundsAtHeightCheck: string[];
+          let backgroundsAtAddinReady: string[];
+
+          function getBackgrounds() {
+            return [document.documentElement, document.body]
+              .map((element) => window.getComputedStyle(element).backgroundColor);
+          }
+
+          const ready = initializeClient();
+
+          const clientPrivateApi = client as unknown as {
+            checkForHeightChangesOfAddinContent(): void;
+          };
+          const heightCheckSpy = spyOn(
+            clientPrivateApi,
+            'checkForHeightChangesOfAddinContent'
+          ).and.callFake(() => {
+            backgroundsAtHeightCheck = getBackgrounds();
+          });
+
+          postMessageSpy.and.callFake((message) => {
+            if (message.messageType === 'addin-ready') {
+              backgroundsAtAddinReady = getBackgrounds();
+            }
+          });
+
+          ready(transparentReadyArgs);
+
+          expect(heightCheckSpy).toHaveBeenCalled();
+          expect(backgroundsAtHeightCheck).toEqual(['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)']);
+          expect(backgroundsAtAddinReady).toEqual(['rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0)']);
+          expectTransparent(document.documentElement);
+          expectTransparent(document.body);
+        });
+
+      it('should restore only client-owned document state on destroy.', () => {
+        const unrelatedClass = 'unrelated-body-class';
+        const unrelatedColor = 'rgb(4, 5, 6)';
+        document.body.classList.add(unrelatedClass);
+        document.body.style.color = unrelatedColor;
+
+        const ready = initializeClient();
+        ready(transparentReadyArgs);
+
+        expectTransparent(document.documentElement);
+        expectTransparent(document.body);
+
+        client.destroy();
+
+        expectOpaque(document.documentElement);
+        expectOpaque(document.body);
+        expect(document.body.classList.contains(unrelatedClass)).toBe(true);
+        expect(document.body.style.color).toBe(unrelatedColor);
+
+        document.body.classList.remove(unrelatedClass);
+      });
+
+      it('should restore the original background when ready is called repeatedly.', () => {
+        const ready = initializeClient();
+
+        ready(transparentReadyArgs);
+        ready(transparentReadyArgs);
+
+        expectTransparent(document.body);
+
+        client.destroy();
+
+        expectOpaque(document.documentElement);
+        expectOpaque(document.body);
+      });
+
+      it('should preserve a transparent background that predates the client.', () => {
+        document.body.style.setProperty('background-color', 'transparent', 'important');
+        document.body.style.setProperty('background-image', 'none', 'important');
+
+        const ready = initializeClient();
+        ready(transparentReadyArgs);
+        client.destroy();
+
+        expectTransparent(document.body);
+        expectOpaque(document.documentElement);
+      });
+
+      it('should not restore over a background the add-in changed after transparency was applied.',
+        () => {
+          const addinBackground = 'rgb(7, 8, 9)';
+          const ready = initializeClient();
+
+          ready(transparentReadyArgs);
+          document.body.style.backgroundColor = addinBackground;
+          client.destroy();
+
+          expect(document.body.style.backgroundColor).toBe(addinBackground);
+          expectOpaque(document.documentElement);
+        });
+
+      const staleCases: { description: string, readyArgs: AddinClientReadyArgs }[] = [
+        {
+          description: 'sets transparentBackground to false',
+          readyArgs: { modalConfig: { style: { transparentBackground: false } } }
+        },
+        {
+          description: 'omits the style',
+          readyArgs: {}
+        }
+      ];
+
+      staleCases.forEach(({ description, readyArgs }) => {
+        it(`should restore the original background when a later ready call ${description}.`, () => {
+          const ready = initializeClient();
+
+          ready(transparentReadyArgs);
+
+          expectTransparent(document.body);
+
+          ready(readyArgs);
+
+          expectOpaque(document.documentElement);
+          expectOpaque(document.body);
+          expect(window.getComputedStyle(document.body).backgroundColor).toBe(opaqueBackground);
+        });
+      });
+
+      it('should make the body transparent once it is parsed when ready is called before the body exists.',
+        () => {
+          const bodySpy = spyOnProperty(document, 'body', 'get').and.returnValue(null);
+          const ready = initializeClient();
+
+          ready(transparentReadyArgs);
+          ready(transparentReadyArgs);
+
+          expectTransparent(document.documentElement);
+          expect(postMessageSpy).toHaveBeenCalledWith(
+            jasmine.objectContaining({ messageType: 'addin-ready' }),
+            TEST_HOST_ORIGIN
+          );
+
+          bodySpy.and.callThrough();
+
+          expectOpaque(document.body);
+
+          document.dispatchEvent(new Event('DOMContentLoaded'));
+
+          expectTransparent(document.body);
+
+          client.destroy();
+
+          expectOpaque(document.documentElement);
+          expectOpaque(document.body);
+        });
+
+      it('should make only the html element transparent if the parsed document has no body.', () => {
+        spyOnProperty(document, 'body', 'get').and.returnValue(null);
+        const ready = initializeClient();
+
+        ready(transparentReadyArgs);
+        document.dispatchEvent(new Event('DOMContentLoaded'));
+
+        expectTransparent(document.documentElement);
+      });
+
+      it('should not make the body transparent once it is parsed if the client was destroyed.', () => {
+        const bodySpy = spyOnProperty(document, 'body', 'get').and.returnValue(null);
+        const ready = initializeClient();
+
+        ready(transparentReadyArgs);
+        client.destroy();
+        bodySpy.and.callThrough();
+        document.dispatchEvent(new Event('DOMContentLoaded'));
+
+        expectOpaque(document.documentElement);
+        expectOpaque(document.body);
+      });
+
+      it('should not change the document background when ready is called after destroy.', () => {
+        const ready = initializeClient();
+
+        client.destroy();
+        ready(transparentReadyArgs);
+
+        expectOpaque(document.documentElement);
+        expectOpaque(document.body);
+      });
+    });
 
   });
 

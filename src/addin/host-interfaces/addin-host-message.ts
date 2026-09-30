@@ -22,6 +22,12 @@ export interface AddinHostMessage {
   context?: any;
 
   /**
+   * Identifies the canonical pattern in which the host displays the add-in.
+   * The client passes this to the add-in only if it is a recognized AddinType.
+   */
+  addinType?: string;
+
+  /**
    * The environment id of the host page.
    */
   envId?: string;
